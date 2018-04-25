@@ -1,0 +1,22 @@
+.graph-component {
+	.links {
+		stroke: black;
+		stroke-width: 1px;
+	}
+
+	.links .ego {
+		stroke-width: 2px;
+	}
+
+	.nodes circle {
+		r: 5px;
+		stroke-width: 2px;
+		stroke: white;
+	}
+
+	.nodes circle.ego {
+		r: 10px;
+		stroke: black;
+		fill: white;
+	}
+}
