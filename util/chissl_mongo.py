@@ -190,9 +190,9 @@ class ChisslMongo(object):
                         if self.verbose:
                             print('dropping', end='...', flush=True)
 
-                        self.db.models_.delete_one({'_id': obj['_id']})
+                        self.db.transduction_.delete_one({'_id': obj['_id']})
 
-                    self.db.models_\
+                    self.db.transduction_\
                         .insert_one(obj)
 
                     if self.verbose:
