@@ -173,15 +173,14 @@ class ChisslMongo(object):
 
                     parents, costs = self.cluster(X_transform, method='ward')
 
-                    obj = {'_id': f'{applicationName}-{modelName}',
-                           'application': applicationName,
-                           'name': modelName,
+                    obj = {'_id': {'application': applicationName,
+                                   'model': modelName},
                            'date': datetime.datetime.utcnow(),
                            'query': query,
                            'project': project,
                            'labels': labels,
                            'hist': hist,
-                           'model': Binary(pickle.dumps(model)),
+                           'pipeline': Binary(pickle.dumps(model)),
                            'parents': parents.tolist(),
                            'costs': costs.tolist(),
                            'instances': index,
