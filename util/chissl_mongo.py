@@ -38,6 +38,9 @@ from pymongo import MongoClient
 import json, pickle, datetime
 from bson.binary import Binary
 
+from sklearn.pipeline import Pipeline
+from sklearn.svm import SVC
+
 import numpy as np
 import pandas as pd
 
@@ -219,6 +222,39 @@ class ChisslMongo(object):
 
                     return obj
 
+    def deploy(self, application, model, labels, Classifier=SVC, drop=False):
+        _id = {'application': application,
+               'model': model}
+
+        doc = self.db.transduction_\
+            .find_one({'_id': _id})
+
+        if doc:
+            index = doc['instances']
+            
+            y = pd.Series(labels)\
+                .loc[set(index).intersection(labels)]
+
+            X = pd.DataFrame(doc['X'], index=index)\
+                .loc[y.index]
+            
+            clf = Classifier().fit(X, y)
+            
+            pipeline = Pipeline(pickle.loads(doc['pipeline']).steps + [('clf', clf)])
+            
+            obj = {'_id': _id,
+                   'pipeline': Binary(pickle.dumps(pipeline))}
+            
+            if drop:
+                self.db.induction_\
+                    .delete_one({'_id': _id})
+            
+            self.db.induction_\
+                .insert_one(obj)
+            
+            return obj
+
+    def list_applications(self):
         return list(self.db._applications.find())
 
     def list_transduction_models(self):
