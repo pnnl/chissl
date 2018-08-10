@@ -44,8 +44,15 @@ import pandas as pd
 from fastcluster import linkage
 
 class ChisslMongo(object):
-    def __init__(self, url=None, db='chissl'):
+    def __init__(self, url=None, db='chissl', verbose=False):
         self.db = MongoClient(url)[db]
+        self.verbose = verbose
+
+    def create_collection(self, collection, docs, drop=False):
+        if drop:
+            self.db[collection].delete_many({})
+
+        return self.db[collection].insert_many(docs)
     
     def create_component(self, _id, component=None, **kwargs):
         '''
@@ -93,7 +100,7 @@ class ChisslMongo(object):
             '_id': _id,
             'collection': collection,
             'component': component,
-            'pipeline': Binary(pickle.dumps(pipeline))
+            'pipeline': pipeline
         }
 
         self.db.applications_\
@@ -101,49 +108,73 @@ class ChisslMongo(object):
         
         return obj
     
-    def create_model(self, applicationName, modelName, query={}, project={}, labels={}):
+    def create_model(self, applicationName, modelName, query={}, project={}, labels={}, drop=False):
         '''
         Creates a trained model by querying the corresponding collection and fitting
         the corresponding pipeline for the application. Clustering is also run and the
         resulting dendrogram and fitted is stored in the _models collection.
         '''
 
+        if self.verbose:
+            print(f'Finding application <{applicationName}>', end='...', flush=True)
+
         application = self.db.applications_\
             .find_one({'_id': applicationName})
 
         if application:
 
+            pipelineName = application['pipeline']
+
+            if self.verbose:
+                print(f'OK\nFinding pipeline <{pipelineName}>', end='...', flush=True)
+
             pipeline = self.db.pipelines_\
-                .find_one({'_id': application['pipeline']})
+                .find_one({'_id': pipelineName})
 
             if pipeline:
 
-                collection = self.db[application['collection']]
+                collectionName = application['collection']
+                collection = self.db[collectionName]
+
+                if self.verbose:
+                    print(f'OK\nQuerying collection <{collectionName}>', end='...', flush=True)
+
                 
                 X = list(collection.find(query))
-                y = [labels.get(xi['_id'], -1) for xi in X]
-                index = [x['_id'] for x in X]
-
-                hist = None
-                if project:
-                    data = collection.aggregate([
-                        {'$match': {'_id': {'$in': index}}},
-                        {'$project': project}
-                    ])
-
-                    hist = pd.DataFrame(list(data))\
-                        .set_index('_id')\
-                        .loc[index]\
-                        .to_dict(orient='list')
 
                 if len(X):
+                    print(f'found {len(X)}...OK')
+
+                    y = [labels.get(xi['_id'], -1) for xi in X]
+                    index = [x['_id'] for x in X]
+
+                    hist = None
+                    if project:
+                        if self.verbose:
+                            print('Projecting data for histograms', end='...')
+                        data = collection.aggregate([
+                            {'$match': {'_id': {'$in': index}}},
+                            {'$project': project}
+                        ])
+
+                        hist = pd.DataFrame(list(data))\
+                            .set_index('_id')\
+                            .loc[index]\
+                            .to_dict(orient='list')
+
+                        if self.verbose:
+                            print('OK')
+
+                    if self.verbose:
+                        print('Transforming data', end='...', flush=True)
 
                     model = pickle.loads(pipeline['pipeline'])
                     X_transform = model.fit_transform(X, y)
 
                     parents, costs = self.cluster(X_transform, method='ward')
 
-                    obj = {'application': applicationName,
+                    obj = {'_id': f'{applicationName}-{modelName}',
+                           'application': applicationName,
                            'name': modelName,
                            'date': datetime.datetime.utcnow(),
                            'query': query,
@@ -156,8 +187,17 @@ class ChisslMongo(object):
                            'instances': index,
                            'X': X_transform.tolist()}
 
+                    if drop:                    
+                        if self.verbose:
+                            print('dropping', end='...', flush=True)
+
+                        self.db.models_.delete_one({'_id': obj['_id']})
+
                     self.db.models_\
                         .insert_one(obj)
+
+                    if self.verbose:
+                        print('OK\ndone.')
 
                     return obj
 
