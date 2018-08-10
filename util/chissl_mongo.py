@@ -219,5 +219,19 @@ class ChisslMongo(object):
 
                     return obj
 
-    def get_applications(self):
         return list(self.db._applications.find())
+
+    def list_transduction_models(self):
+        return self.db.transduction_.distinct('_id')
+
+    def list_induction_models(self):
+        return self.db.induction_.distinct('_id')
+
+    def get_induction_model(self, application, model):
+        _id = {'application': application,
+               'model': model}
+
+        obj = self.db.induction_.find_one({'_id': _id})
+
+        if obj:
+            return pickle.loads(obj['pipeline'])
