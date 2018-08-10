@@ -187,7 +187,13 @@ class ChisslMongo(object):
                     model = pickle.loads(pipeline['pipeline'])
                     X_transform = model.fit_transform(X, y)
 
+                    if self.verbose:
+                        print('OK\nClustering data', end='...', flush=True)
+
                     parents, costs = cluster(X_transform, method='ward')
+
+                    if self.verbose:
+                        print('OK')
 
                     obj = {'_id': {'application': applicationName,
                                    'model': modelName},
@@ -203,16 +209,13 @@ class ChisslMongo(object):
                            'X': X_transform.tolist()}
 
                     if drop:                    
-                        if self.verbose:
-                            print('dropping', end='...', flush=True)
-
                         self.db.transduction_.delete_one({'_id': obj['_id']})
 
                     self.db.transduction_\
                         .insert_one(obj)
 
                     if self.verbose:
-                        print('OK\ndone.')
+                        print('done.')
 
                     return obj
 
