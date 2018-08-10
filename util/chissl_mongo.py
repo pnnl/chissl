@@ -43,6 +43,22 @@ import pandas as pd
 
 from fastcluster import linkage
 
+def cluster(X, **kwargs):
+    Z = linkage(X, method='ward')
+    n = len(X)
+    m = len(Z)
+
+    left, right = Z[:,:2].astype('int').T
+    dist = Z[:, 2]
+
+    parents = np.arange(n + m)
+    costs = np.zeros(n + m)
+
+    parents[left] = parents[right] = np.arange(m) + n
+    costs[left] = costs[right] = dist
+
+    return parents, costs
+
 class ChisslMongo(object):
     def __init__(self, url=None, db='chissl', verbose=False):
         self.db = MongoClient(url)[db]
@@ -171,7 +187,7 @@ class ChisslMongo(object):
                     model = pickle.loads(pipeline['pipeline'])
                     X_transform = model.fit_transform(X, y)
 
-                    parents, costs = self.cluster(X_transform, method='ward')
+                    parents, costs = cluster(X_transform, method='ward')
 
                     obj = {'_id': {'application': applicationName,
                                    'model': modelName},
@@ -199,22 +215,6 @@ class ChisslMongo(object):
                         print('OK\ndone.')
 
                     return obj
-
-    def cluster(self, X, **kwargs):
-        Z = linkage(X, method='ward')
-        n = len(X)
-        m = len(Z)
-
-        left, right = Z[:,:2].astype('int').T
-        dist = Z[:, 2]
-
-        parents = np.arange(n + m)
-        costs = np.zeros(n + m)
-
-        parents[left] = parents[right] = np.arange(m) + n
-        costs[left] = costs[right] = dist
-
-        return parents, costs
 
     def get_applications(self):
         return list(self.db._applications.find())
