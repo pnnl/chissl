@@ -43,8 +43,12 @@ import {connect} from 'react-redux';
 import IconButton from '@material-ui/core/IconButton';
 
 export default connect(
-  (state, {action, ...props}) => props,
+  null,
   (dispatch, {action}) => ({
     onClick: () => action && dispatch(action)
+  }),
+  (stateProps, dispatchProps, {action, ...ownProps}) => ({
+    ...dispatchProps,
+    ...ownProps
   })
 )(IconButton);
