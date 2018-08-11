@@ -92,22 +92,6 @@ class ChisslMongo(object):
 
         return obj
         
-    def create_pipeline(self, _id, pipeline, drop=False):
-        '''
-        A pipeline is a scikit-learn pipeline that takes raw data and
-        '''
-        if drop:
-            self.db.pipelines_\
-                .delete_one({'_id': _id})
-
-        obj = {'_id': _id,
-               'pipeline': Binary(pickle.dumps(pipeline))}
-
-        self.db.pipelines_\
-            .insert_one(obj)
-
-        return obj
-        
     def create_application(self, _id, collection, component, pipeline, drop=False):
         '''
         An application is an association of a collection (raw data), a component (visualization)
