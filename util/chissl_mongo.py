@@ -243,6 +243,7 @@ class ChisslMongo(object):
             pipeline = Pipeline(pickle.loads(doc['pipeline']).steps + [('clf', clf)])
             
             obj = {'_id': _id,
+                   'date': datetime.datetime.utcnow(),
                    'pipeline': Binary(pickle.dumps(pipeline))}
             
             if drop:
