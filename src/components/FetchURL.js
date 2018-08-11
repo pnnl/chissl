@@ -61,12 +61,12 @@ class FetchURL extends React.Component {
   }
 
   render() {
-    const {children} = this.props;
+    const {after, children} = this.props;
     const {data} = this.state;
     
     return (
       data && children
-        ? React.cloneElement(children, data)
+        ? React.cloneElement(children, after ? after(data) : data)
         : <div className='data-not-loaded'/>
     );
   }
