@@ -37,8 +37,8 @@
     "serve": "npm-run-all -p start-api start-serve",
     "build": "npm run build-css && react-scripts build",
     "eject": "react-scripts eject",
-    "build-css": "node-sass-chokidar src/ -o src/",
-    "watch-css": "npm run build-css && node-sass-chokidar src/ -o src/ --watch --recursive"
+    "build-css": "node-sass src/ -o src/",
+    "watch-css": "npm run build-css && node-sass src/ -o src/ --watch --recursive"
   },
   "proxy": "http://localhost:9101"
 }
