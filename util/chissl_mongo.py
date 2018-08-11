@@ -46,6 +46,8 @@ import pandas as pd
 
 from fastcluster import linkage
 
+import pydoc
+
 def cluster(X, **kwargs):
     Z = linkage(X, method='ward')
     n = len(X)
@@ -142,85 +144,83 @@ class ChisslMongo(object):
 
         if application:
 
-            pipelineName = application['pipeline']
+            # pipelineName = application['pipeline']
+
+            # if self.verbose:
+            #     print(f'OK\nFinding pipeline <{pipelineName}>', end='...', flush=True)
+
+            # pipeline = self.db.pipelines_\
+            #     .find_one({'_id': pipelineName})
+
+            collectionName = application['collection']
+            collection = self.db[collectionName]
 
             if self.verbose:
-                print(f'OK\nFinding pipeline <{pipelineName}>', end='...', flush=True)
+                print(f'OK\nQuerying collection <{collectionName}>', end='...', flush=True)
 
-            pipeline = self.db.pipelines_\
-                .find_one({'_id': pipelineName})
+            
+            X = list(collection.find(query))
 
-            if pipeline:
+            if len(X):
+                print(f'found {len(X)}...OK')
 
-                collectionName = application['collection']
-                collection = self.db[collectionName]
+                y = [labels.get(xi['_id'], -1) for xi in X]
+                index = [x['_id'] for x in X]
 
-                if self.verbose:
-                    print(f'OK\nQuerying collection <{collectionName}>', end='...', flush=True)
-
-                
-                X = list(collection.find(query))
-
-                if len(X):
-                    print(f'found {len(X)}...OK')
-
-                    y = [labels.get(xi['_id'], -1) for xi in X]
-                    index = [x['_id'] for x in X]
-
-                    hist = None
-                    if project:
-                        if self.verbose:
-                            print('Projecting data for histograms', end='...')
-                        data = collection.aggregate([
-                            {'$match': {'_id': {'$in': index}}},
-                            {'$project': project}
-                        ])
-
-                        hist = pd.DataFrame(list(data))\
-                            .set_index('_id')\
-                            .loc[index]\
-                            .to_dict(orient='list')
-
-                        if self.verbose:
-                            print('OK')
-
+                hist = None
+                if project:
                     if self.verbose:
-                        print('Transforming data', end='...', flush=True)
+                        print('Projecting data for histograms', end='...')
+                    data = collection.aggregate([
+                        {'$match': {'_id': {'$in': index}}},
+                        {'$project': project}
+                    ])
 
-                    model = pickle.loads(pipeline['pipeline'])
-                    X_transform = model.fit_transform(X, y)
-
-                    if self.verbose:
-                        print('OK\nClustering data', end='...', flush=True)
-
-                    parents, costs = cluster(X_transform, method='ward')
+                    hist = pd.DataFrame(list(data))\
+                        .set_index('_id')\
+                        .loc[index]\
+                        .to_dict(orient='list')
 
                     if self.verbose:
                         print('OK')
 
-                    obj = {'_id': {'application': applicationName,
-                                   'model': modelName},
-                           'date': datetime.datetime.utcnow(),
-                           'query': query,
-                           'project': project,
-                           'labels': labels,
-                           'hist': hist,
-                           'pipeline': Binary(pickle.dumps(model)),
-                           'parents': parents.tolist(),
-                           'costs': costs.tolist(),
-                           'instances': index,
-                           'X': X_transform.tolist()}
+                if self.verbose:
+                    print('Transforming data', end='...', flush=True)
 
-                    if drop:                    
-                        self.db.transduction_.delete_one({'_id': obj['_id']})
+                model = pydoc.locate(application['pipeline'])
+                X_transform = model.fit_transform(X, y)
 
-                    self.db.transduction_\
-                        .insert_one(obj)
+                if self.verbose:
+                    print('OK\nClustering data', end='...', flush=True)
 
-                    if self.verbose:
-                        print('done.')
+                parents, costs = cluster(X_transform, method='ward')
 
-                    return obj
+                if self.verbose:
+                    print('OK')
+
+                obj = {'_id': {'application': applicationName,
+                               'model': modelName},
+                       'date': datetime.datetime.utcnow(),
+                       'query': query,
+                       'project': project,
+                       'labels': labels,
+                       'hist': hist,
+                       'pipeline': Binary(pickle.dumps(model)),
+                       'parents': parents.tolist(),
+                       'costs': costs.tolist(),
+                       'instances': index,
+                       'X': X_transform.tolist()}
+
+                if drop:                    
+                    self.db.transduction_.delete_one({'_id': obj['_id']})
+
+                self.db.transduction_\
+                    .insert_one(obj)
+
+                if self.verbose:
+                    print('done.')
+
+                return obj
 
     def deploy(self, application, model, labels, Classifier=SVC, drop=False):
         _id = {'application': application,
