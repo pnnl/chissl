@@ -45,12 +45,16 @@ import {Map} from 'immutable';
 
 import {format} from 'd3-format';
 
-import FolderIcon from 'material-ui-icons/Folder'
+import FolderIcon from '@material-ui/icons/Folder'
 
-import Drawer from 'material-ui/Drawer';
-import List, { ListItemIcon, ListItem, ListItemText } from 'material-ui/List'
-import {CardHeader} from 'material-ui/Card'
-import Avatar from 'material-ui/Avatar'
+import Drawer from '@material-ui/core/Drawer';
+import List from '@material-ui/core/List'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
+
+import {CardHeader} from '@material-ui/core/Card'
+import Avatar from '@material-ui/core/Avatar'
 
 import Accordion from '../components/Accordion'
 

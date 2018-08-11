@@ -40,7 +40,7 @@
 
 import {connect} from 'react-redux';
 
-import IconButton from 'material-ui/IconButton';
+import IconButton from '@material-ui/core/IconButton';
 
 export default connect(
   (state, {action, ...props}) => props,

@@ -42,7 +42,7 @@ import React from 'react';
 
 import {format} from 'd3-format';
 
-import Button from 'material-ui/Button';
+import Button from '@material-ui/core/Button';
 
 import FetchURL from './FetchURL';
 

@@ -40,7 +40,10 @@
 
 import React from 'react';
 
-import List, {ListItem, ListItemText, ListItemIcon} from 'material-ui/List'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
+import ListItemIcon from '@material-ui/core/ListItemIcon'
 
 import 'font-awesome/css/font-awesome.css';
 

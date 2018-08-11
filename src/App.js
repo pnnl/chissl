@@ -45,7 +45,7 @@ import {List} from 'immutable';
 
 import {createInitAction} from './actions/ui';
 
-import { withStyles } from 'material-ui/styles';
+import { withStyles } from '@material-ui/core/styles';
 
 import AppBarContainer from './containers/AppBarContainer';
 import SelectDatasetContainer from './containers/SelectDatasetContainer';

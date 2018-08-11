@@ -46,10 +46,10 @@ import {Map} from 'immutable'
 import {format} from 'd3-format';
 import {sum} from 'd3-array';
 
-import Typography from 'material-ui/Typography'
+import Typography from '@material-ui/core/Typography'
 
-import AddCircleIcon from 'material-ui-icons/AddCircle';
-import RemoveCircleIcon from 'material-ui-icons/RemoveCircle';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 
 import IconActionButtonContainer from './IconActionButtonContainer';
 

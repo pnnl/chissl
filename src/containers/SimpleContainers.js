@@ -40,8 +40,8 @@
 
 import {connect} from 'react-redux';
 
-import {TablePagination} from 'material-ui/Table';
-import TextField from 'material-ui/TextField';
+import TablePagination from '@material-ui/core/TablePagination';
+import TextField from '@material-ui/core/TextField';
 
 import {createAction} from '../actions';
 

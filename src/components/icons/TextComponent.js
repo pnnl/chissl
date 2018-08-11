@@ -40,7 +40,7 @@
 
 import React, {Component} from 'react';
 
-import Popover from 'material-ui/Popover';
+import Popover from '@material-ui/core/Popover';
 
 import {timeFormat} from 'd3-time-format';
 import {scaleOrdinal} from 'd3-scale';

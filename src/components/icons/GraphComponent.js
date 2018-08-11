@@ -41,7 +41,9 @@
 import React from 'react'
 import {Map} from 'immutable'
 
-import List, {ListItem, ListItemText} from 'material-ui/List'
+import List from '@material-ui/core/List'
+import ListItem from '@material-ui/core/ListItem'
+import ListItemText from '@material-ui/core/ListItemText'
 
 import PopoverComponent from './PopoverComponent'
 

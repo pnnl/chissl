@@ -42,11 +42,12 @@ import React from 'react';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 
-import Toolbar from 'material-ui/Toolbar';
-import IconButton from 'material-ui/IconButton';
-import CloseIcon from 'material-ui-icons/Close';
-import Paper from 'material-ui/Paper';
-import Drawer from 'material-ui/Drawer';
+import Toolbar from '@material-ui/core/Toolbar';
+import IconButton from '@material-ui/core/IconButton';
+import Paper from '@material-ui/core/Paper';
+import Drawer from '@material-ui/core/Drawer';
+
+import CloseIcon from '@material-ui/icons/Close';
 
 import InstanceContainer from './InstanceContainer';
 import {PaginationContainer} from './SimpleContainers';

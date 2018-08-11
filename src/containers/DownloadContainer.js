@@ -42,8 +42,8 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import {Map} from 'immutable';
 
-import IconButton from 'material-ui/IconButton'
-import FileDownloadIcon from 'material-ui-icons/FileDownload';
+import IconButton from '@material-ui/core/IconButton'
+import FileDownloadIcon from '@material-ui/icons/CloudDownload';
 
 import {getPredictions} from '../selectors';
 

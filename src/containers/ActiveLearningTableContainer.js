@@ -44,12 +44,19 @@ import {Map, OrderedMap} from 'immutable'
 
 import {range} from 'd3-array'
 
-import Grid from 'material-ui/Grid'
-import Paper from 'material-ui/Paper'
-import Card, {CardHeader, CardContent} from 'material-ui/Card'
-import Table, { TableBody, TableCell, TableHead, TableRow } from 'material-ui/Table'
+import Grid from '@material-ui/core/Grid'
+import Paper from '@material-ui/core/Paper'
+import Card from '@material-ui/core/Card'
+import CardHeader from '@material-ui/core/CardHeader'
+import CardContent from '@material-ui/core/CardContent'
 
-import CloseIcon from 'material-ui-icons/Close';
+import Table from '@material-ui/core/Table'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
+
+import CloseIcon from '@material-ui/icons/Close';
 
 import InstanceContainer from './InstanceContainer'
 import GroupHistogramContainer, {GroupHistogramSelect} from './GroupHistogramContainer'
