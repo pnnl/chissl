@@ -36,7 +36,7 @@
 #      DAMAGE.
 
 import os
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from util import chissl_mongo as cm
 
 def start_app(app, mongo, **kwargs):
@@ -49,6 +49,21 @@ def start_app(app, mongo, **kwargs):
     @app.route('/api/transduction/<application>')
     def list_transduction_models(application):
         return jsonify(models=chissl.list_transduction_models(application))
+
+    @app.route('/api/transduction/<application>/<model>', methods=['POST', 'GET'])
+    def get_transduction_model(application, model):
+        if request.method == 'POST':
+            kwargs = request.get_json() or {}
+            obj = chissl.create_model(application, model, **kwargs)
+            del obj['pipeline']
+            return jsonify(obj)
+
+        _id = {'application': application,
+               'model': model}
+        obj = chissl.get_data('transduction_', _id)
+        del obj['pipeline']
+
+        return jsonify(obj)
 
     @app.route('/api/induction/<application>')
     def list_induction_models(application):
