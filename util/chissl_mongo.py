@@ -255,14 +255,22 @@ class ChisslMongo(object):
             
             return obj
 
+    def summarize_models(self, application, collection):
+        docs = self.db[collection].aggregate([
+            {'$match': {'_id.application': application}},
+            {'$project': {'date': True}}
+        ])
+
+        return {x['_id']['model']: x['date'] for x in docs}
+
     def list_applications(self):
-        return list(self.db._applications.find())
+        return list(self.db.applications_.find())
 
-    def list_transduction_models(self):
-        return self.db.transduction_.distinct('_id')
+    def list_transduction_models(self, application):
+        return self.summarize_models(application, 'transduction_')
 
-    def list_induction_models(self):
-        return self.db.induction_.distinct('_id')
+    def list_induction_models(self, application):
+        return self.summarize_models(application, 'induction_')
 
     def get_induction_model(self, application, model):
         _id = {'application': application,
@@ -272,3 +280,6 @@ class ChisslMongo(object):
 
         if obj:
             return pickle.loads(obj['pipeline'])
+
+    def get_data(self, collection, _id):
+        return self.db[collection].find_one({'_id': _id})
