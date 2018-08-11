@@ -35,102 +35,32 @@
 #      OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 #      DAMAGE.
 
-import os, json, glob, datetime
-from functools import lru_cache
-
-import flask
-from pymongo import MongoClient
-
-import pandas as pd
-import numpy as np
-
-from util.cluster import mask_tree
-
-DATA_PATH = 'clusters'
+import os
+from flask import Flask, jsonify
+from util import chissl_mongo as cm
 
 def start_app(app, mongo, **kwargs):
-    client = MongoClient(mongo)
+    chissl = cm.ChisslMongo(mongo)
 
-    print(client.database_names())
+    @app.route('/api/', methods=['GET'])
+    def list_applications():
+        return jsonify(applications=chissl.list_applications())
 
-    @lru_cache()
-    def describe_dataset(dataset):
-        db = client[dataset]
+    @app.route('/api/transduction/<application>')
+    def list_transduction_models(application):
+        return jsonify(models=chissl.list_transduction_models(application))
 
-        return { 'models': db.clusters.distinct('_id'),
-                 'instances': db.instances.count(),
-                 'example': (db.instances.find_one() or {}).get('_id'),
-                 'tags': db.instances.distinct('tags'),
-                 'props':  (db.clusters.find_one() or {}).get('props', {})}
+    @app.route('/api/induction/<application>')
+    def list_induction_models(application):
+        return jsonify(models=chissl.list_induction_models(application))
 
-    def summarize_dataset(dataset):
-        doc = describe_dataset(dataset).copy()
-        doc['tags'] = len(doc['tags'])
-        return doc
+    @app.route('/api/induction/<application>/<model>')
+    def get_induction_model(application, model):
+        return jsonify(chissl.get_induction_model(application, model))
 
-    @lru_cache(maxsize=1)
-    def load_model(dataset, model):
-        doc = client[dataset].clusters.find_one({'_id': model}) or {}
-
-        for k in ['parents', 'costs', 'instances']:
-            doc[k] = np.array(doc[k])
-
-        return doc
-
-    def get_dendrogram(dataset, model, tags, labels):
-
-        t = datetime.datetime.now()
-        print('Querying', dataset, '...', flush=True)
-
-        data = load_model(dataset, model).copy()
-        collection = client[dataset].instances
-
-        result = collection.find({'$and': [{'tags': {'$in': list(tags)}} if len(tags) else {},
-                                           {'_id': {'$in': data['instances'].tolist()}}]})
-
-        ids =  set(result.distinct('_id'))
-        mask = np.array([i in ids or i in labels
-                         for i in data['instances']])
-        parents, mask2 = mask_tree(data['parents'], mask)
-
-        data.update({
-            'parents'   : parents.tolist(),
-            'costs'     : data['costs'][mask2].tolist(),
-            'instances' : data['instances'][mask].tolist(),
-            'tags'      : describe_dataset(dataset)['tags'],
-        })
-
-        if 'hist' in data:
-            data['hist'] = pd.DataFrame(data['hist'])\
-                [mask]\
-                .to_dict(orient='list')
-
-        return data
-
-    def from_str(s, delimiter=','):
-        return set(s.split(delimiter)) if s else set()
-
-    @app.route('/api/')
-    def list_datasets():
-        doc = { dataset: summarize_dataset(dataset)
-                for dataset in client.database_names()
-                if dataset.startswith('chissl_') and client[dataset].clusters.count() and client[dataset].instances.count() }
-
-        return flask.jsonify(doc)
-
-    @app.route('/api/<dataset>')
-    def get_dataset_details(dataset):
-        return flask.jsonify(describe_dataset(dataset))
-
-    @app.route('/api/<dataset>/models/<model>')
-    def get_dataset(dataset, model):
-        tags = from_str(flask.request.args.get('tags'))
-        labels = from_str(flask.request.args.get('labels'))
-        return flask.jsonify(get_dendrogram(dataset, model, tags, labels))
-
-    @app.route('/api/<dataset>/data/<collection>/<_id>')
-    def get_by_id(dataset, collection, _id):
-        return flask.jsonify(client[dataset][collection].find_one({'_id': _id}))
+    @app.route('/api/data/<collection>/<_id>')
+    def get_data(collection, _id):
+        return jsonify(chissl.get_data(collection, _id))
 
     app.run(threaded=True, **kwargs)
 
@@ -147,7 +77,7 @@ if __name__ == '__main__':
     print( ' * starting app')
     print( '   *', args)
 
-    app = flask.Flask(__name__)
+    app = Flask(__name__)
     app.secret_key = os.urandom(2557555)
 
     start_app(app, **args)
