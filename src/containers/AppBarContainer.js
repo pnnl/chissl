@@ -51,6 +51,8 @@ import MenuIcon from '@material-ui/icons/Menu';
 
 import {createOpenDatasetAction} from '../actions/ui';
 
+import ApplicationSelectDialog from './ApplicationSelectDialog'
+
 import IconActionButtonContainer from './IconActionButtonContainer';
 import DownloadContainer from './DownloadContainer';
 import InteractionStyleContainer from './InteractionStyleContainer';
@@ -76,13 +78,7 @@ const AppBarComponent = ({classes, title, isLoading, onClick, children}) =>
     <AppBar position='static'>
       <Toolbar>
 
-        <IconActionButtonContainer
-          color='inherit'
-          aria-label='Menu'
-          action={createOpenDatasetAction()}
-        >
-          <MenuIcon/>
-        </IconActionButtonContainer>
+        <ApplicationSelectDialog />
 
         <Typography type='title' color='inherit'>
           {title}

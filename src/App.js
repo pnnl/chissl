@@ -62,29 +62,22 @@ const styles = theme => ({
 });        
 
 class App extends Component {
-  componentDidMount() {
-    this.props.onChange();
-  }
-
   render() {
     const {sequential} = this.props;
     return (
       <div className='App'>
-        <AppBarContainer>
-          <div style={{width: 350, color: 'black'}}>
-            <QueryContainer />
-          </div>
-        </AppBarContainer>
+        { <AppBarContainer/> }
 
-        <MoreDrawerContainer/>
+        { /*<MoreDrawerContainer/> */}
 
-        <SelectDatasetContainer />
+        { /*<SelectDatasetContainer />*/ }
 
-        <UnlabeledDataContainer/>
+        { /* <UnlabeledDataContainer/> */ }
 
-        { sequential
+        { /* sequential
             ? <ActiveLearningTableContainer />
             : <InstanceTableContainer/>
+          */
         }
 
       </div>
@@ -97,7 +90,4 @@ export default connect(
     sequential: state.getIn(['ui', 'activeLearningStyle']),
     tags: state.getIn(['datasets', state.getIn(['ui', 'currentDataset']), 'tags'], List()),
   }),
-  dispatch => bindActionCreators({
-    onChange: createInitAction
-  }, dispatch)
 )(withStyles(styles)(App));
