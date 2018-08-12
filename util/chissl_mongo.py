@@ -48,6 +48,8 @@ from fastcluster import linkage
 
 import pydoc
 
+from collections import defaultdict
+
 def cluster(X, **kwargs):
     Z = linkage(X, method='ward')
     n = len(X)
@@ -239,22 +241,24 @@ class ChisslMongo(object):
             
             return obj
 
-    def summarize_models(self, application, collection):
-        docs = self.db[collection].aggregate([
+    def summarize_models(self, collection, application):
+        return self.db[collection].aggregate([
             {'$match': {'_id.application': application}},
-            {'$project': {'date': True}}
+            {'$project': {'_id': '$_id.model',
+                          'date': True,
+                          'query': True,
+                          'project': True,
+                          'labels': True}}
         ])
 
-        return {x['_id']['model']: x['date'] for x in docs}
-
     def list_applications(self):
-        return list(self.db.applications_.find())
+        return self.db.applications_.find()
 
     def list_transduction_models(self, application):
-        return self.summarize_models(application, 'transduction_')
+        return self.summarize_models('transduction_', application)
 
     def list_induction_models(self, application):
-        return self.summarize_models(application, 'induction_')
+        return self.summarize_models('induction_', application)
 
     def get_induction_model(self, application, model):
         _id = {'application': application,

@@ -39,18 +39,22 @@ import os
 from flask import Flask, jsonify, request
 from util import chissl_mongo as cm
 
+def as_dict(li):
+    return {x['_id']: x for x in li}
+
 def start_app(app, mongo, **kwargs):
-    chissl = cm.ChisslMongo(mongo)
+    chissl = cm.ChisslMongo(mongo, verbose=kwargs['debug'])
 
-    @app.route('/api/', methods=['GET'])
+    @app.route('/api/applications/', methods=['GET'])
     def list_applications():
-        return jsonify(applications=chissl.list_applications())
+        return jsonify(as_dict(chissl.list_applications()))
 
-    @app.route('/api/transduction/<application>')
+    @app.route('/api/applications/<application>/', methods=['GET'])
     def list_transduction_models(application):
-        return jsonify(models=chissl.list_transduction_models(application))
+        return jsonify(transduction=as_dict(chissl.list_transduction_models(application)),
+                       induction=as_dict(chissl.list_induction_models(application)))
 
-    @app.route('/api/transduction/<application>/<model>', methods=['POST', 'GET'])
+    @app.route('/api/applications/<application>/transduction/<model>')
     def get_transduction_model(application, model):
         if request.method == 'POST':
             kwargs = request.get_json() or {}
@@ -67,10 +71,10 @@ def start_app(app, mongo, **kwargs):
 
     @app.route('/api/induction/<application>')
     def list_induction_models(application):
-        return jsonify(models=chissl.list_induction_models(application))
+        return jsonify(induction=chissl.list_induction_models(application))
 
     @app.route('/api/induction/<application>/<model>')
-    def get_induction_model(application, model):
+    def list_induction_model(application, model):
         return jsonify(chissl.get_induction_model(application, model))
 
     @app.route('/api/data/<collection>/<_id>')
