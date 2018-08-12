@@ -23,6 +23,11 @@ import {
   getCurrentApplication,
 } from '../actions/api'
 
+import {
+  CLIPBOARD_PATH,
+  createClipboardAction
+} from '../actions/clipboard'
+
 const styles = theme => ({
   button: {
     marginRight: theme.spacing.unit * 4,
@@ -40,7 +45,7 @@ class NewModelList extends React.Component {
   };
 
   render() {
-    const {currentApplication, classes} = this.props;
+    const {currentApplication, classes, onChange, ...props} = this.props;
 
     return currentApplication === undefined
       ? <div/>
@@ -81,15 +86,15 @@ class NewModelList extends React.Component {
             unmountOnExit
           >
             <List component="div" disablePadding>
-              { ['query', 'project'].map(d =>
+              { ['labels', 'query', 'project'].map(d =>
                   <ListItem key={d}
                     className={classes.nested}
                   >
                     <ListItemText
                       primary={
                         <ValidatedTextArea
-                          value='{}'
-                          onChange={v => console.log('valid', v)}
+                          value={JSON.stringify(props[d] || {})}
+                          onChange={v => onChange(d, v)}
                           validate={JSON.parse}
                         >
                           <TextField fullWidth multiline />
@@ -108,6 +113,12 @@ class NewModelList extends React.Component {
 
 export default connect(
   state => ({
+    labels: state.getIn([...CLIPBOARD_PATH, 'labels']),
+    query: state.getIn([...CLIPBOARD_PATH, 'query']),
+    project: state.getIn([...CLIPBOARD_PATH, 'project']),
     currentApplication: getCurrentApplication(state)
-  })
+  }),
+  dispatch => bindActionCreators({
+    onChange: createClipboardAction
+  }, dispatch)
 )(withStyles(styles)(NewModelList))

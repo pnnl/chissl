@@ -22,6 +22,8 @@ import {
   createSetApplicationAction
 } from '../actions/api'
 
+import {createClipboardAction} from '../actions/clipboard'
+
 const styles = theme => ({
   button: {
     marginRight: theme.spacing.unit * 4,
@@ -40,7 +42,7 @@ class ModelList extends React.Component {
   };
 
   render() {
-    const {currentApplication, transduction=Map(), induction=Map(), onOpen, classes} = this.props;
+    const {currentApplication, transduction=Map(), induction=Map(), onOpen, onClick, classes} = this.props;
 
     return transduction.size > 0 &&
       <List
@@ -88,6 +90,7 @@ class ModelList extends React.Component {
                     <ListItem key={d}
                       button
                       className={classes.nested}
+                      onClick={() => onClick && onClick(d, v.get(d).toJS())}
                     >
                       <ListItemText
                         primary={JSON.stringify(v.get(d).toJS())}
@@ -117,5 +120,6 @@ export default connect(
   ),
   dispatch => bindActionCreators({
     // onOpen: 
+    onClick: createClipboardAction
   }, dispatch)
 )(withStyles(styles)(ModelList))
