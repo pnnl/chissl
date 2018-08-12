@@ -5,7 +5,6 @@ import {Map} from 'immutable'
 
 import Grid from '@material-ui/core/Grid'
 
-import TextField from '@material-ui/core/TextField';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
@@ -17,6 +16,7 @@ import {createListApplicationsAction} from '../actions/api'
 
 import ApplicationList from './ApplicationList'
 import TransductionModelList from './TransductionModelList'
+import NewModelList from './NewModelList'
 
 class ModelPicker extends React.Component {
   render() {
@@ -34,6 +34,7 @@ class ModelPicker extends React.Component {
 
         <Grid item xs={12} sm={8}>
           <TransductionModelList />
+          <NewModelList />
         </Grid>
       </Grid>
 

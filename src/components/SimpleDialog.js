@@ -24,7 +24,7 @@ class SimpleDialog extends React.Component {
   };
 
   render() {
-    const {title='Title', cancel='Cancel', submit='Submit', button, children, onClick, ...props} = this.props;
+    const {title='Title', cancel='Cancel', submit='Submit', button, children, onClick, actions, ...props} = this.props;
 
     return <div>
       { button
@@ -47,14 +47,16 @@ class SimpleDialog extends React.Component {
           { children }
         </DialogContent>
 
-        <DialogActions>
-          <Button onClick={this.handleClose} color='secondary'>
-            { cancel }
-          </Button>
-          <Button onClick={this.handleClose} color='primary'>
-            { submit }
-          </Button>
-        </DialogActions>
+        { actions &&
+          <DialogActions>
+            <Button onClick={this.handleClose} color='secondary'>
+              { cancel }
+            </Button>
+            <Button onClick={this.handleClose} color='primary'>
+              { submit }
+            </Button>
+          </DialogActions>
+        }
       </Dialog>
     </div>
   }
