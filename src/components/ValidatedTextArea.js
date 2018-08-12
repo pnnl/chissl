@@ -4,24 +4,25 @@ import {debounce} from 'lodash'
 class ValidatedTextArea extends React.Component {
   state = {}
 
-  handleValidate = debounce(() => {
+  handleValidate = debounce(emit => {
     const {value} = this.state;
     const {onChange, validate} = this.props;
 
     try {
-      onChange(validate(value));
+      emit && onChange(validate(value));
       this.setState({error: undefined});
     } catch(exn) {
       this.setState({error: String(exn)});
     }
   }, 1000)
 
-  handleSetValue = value => {
+  handleSetValue = (value, emit) => {
     this.setState({value});
-    this.handleValidate();
+    this.handleValidate(emit);
   }
 
-  handleChange = ev => this.handleSetValue(ev.target.value)
+  handleChange = ev =>
+    this.handleSetValue(ev.target.value, true)
 
   componentDidMount() {
     this.handleSetValue(this.props.value);
