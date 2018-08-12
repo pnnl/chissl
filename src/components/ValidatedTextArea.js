@@ -32,6 +32,10 @@ class ValidatedTextArea extends React.Component {
     this.handleSetValue(nextProps.value);
   }
 
+  componentWillUnmount() {
+    this.handleValidate.cancel();
+  }
+
   render() {
     const {value='', error} = this.state;
     const {children} = this.props;
