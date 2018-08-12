@@ -13,7 +13,7 @@ import ListItemText from '@material-ui/core/ListItemText'
 import ListSubheader from '@material-ui/core/ListSubheader'
 import Button from '@material-ui/core/Button'
 
-import WifiIcon from '@material-ui/icons/Wifi'
+import ImportExportIcon from '@material-ui/icons/ImportExport'
 import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
 
@@ -57,7 +57,7 @@ class ModelList extends React.Component {
               onClick={this.handleClick(k)}
             >
               <ListItemIcon disabled={!induction.has(k)}>
-                <WifiIcon />
+                <ImportExportIcon />
               </ListItemIcon>
 
               <ListItemText
