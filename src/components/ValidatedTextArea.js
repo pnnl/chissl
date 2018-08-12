@@ -1,0 +1,49 @@
+import React from 'react'
+import {debounce} from 'lodash'
+
+class ValidatedTextArea extends React.Component {
+  state = {}
+
+  handleValidate = debounce(() => {
+    const {value} = this.state;
+    const {onChange, validate} = this.props;
+
+    try {
+      onChange(validate(value));
+      this.setState({error: undefined});
+    } catch(exn) {
+      this.setState({error: String(exn)});
+    }
+  }, 1000)
+
+  handleSetValue = value => {
+    this.setState({value});
+    this.handleValidate();
+  }
+
+  handleChange = ev => this.handleSetValue(ev.target.value)
+
+  componentDidMount() {
+    this.handleSetValue(this.props.value);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.handleSetValue(nextProps.value);
+  }
+
+  render() {
+    const {value='', error} = this.state;
+    const {children} = this.props;
+
+    const props = {
+      value,
+      error: error !== undefined,
+      label: error,
+      onChange: this.handleChange
+    };
+
+    return React.cloneElement(children, props)
+  }
+}
+
+export default ValidatedTextArea
