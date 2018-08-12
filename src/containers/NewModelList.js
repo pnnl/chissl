@@ -24,9 +24,9 @@ import {
 } from '../actions/api'
 
 import {
-  CLIPBOARD_PATH,
-  createClipboardAction
-} from '../actions/clipboard'
+  SETUP_PATH,
+  createSetupAction
+} from '../actions/setup'
 
 const styles = theme => ({
   button: {
@@ -113,12 +113,12 @@ class NewModelList extends React.Component {
 
 export default connect(
   state => ({
-    labels: state.getIn([...CLIPBOARD_PATH, 'labels']),
-    query: state.getIn([...CLIPBOARD_PATH, 'query']),
-    project: state.getIn([...CLIPBOARD_PATH, 'project']),
+    labels: state.getIn([...SETUP_PATH, 'labels']),
+    query: state.getIn([...SETUP_PATH, 'query']),
+    project: state.getIn([...SETUP_PATH, 'project']),
     currentApplication: getCurrentApplication(state)
   }),
   dispatch => bindActionCreators({
-    onChange: createClipboardAction
+    onChange: createSetupAction
   }, dispatch)
 )(withStyles(styles)(NewModelList))

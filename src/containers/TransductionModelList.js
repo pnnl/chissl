@@ -22,7 +22,7 @@ import {
   createSetApplicationAction
 } from '../actions/api'
 
-import {createClipboardAction} from '../actions/clipboard'
+import {createSetupAction} from '../actions/setup'
 
 const styles = theme => ({
   button: {
@@ -120,6 +120,6 @@ export default connect(
   ),
   dispatch => bindActionCreators({
     // onOpen: 
-    onClick: createClipboardAction
+    onClick: createSetupAction
   }, dispatch)
 )(withStyles(styles)(ModelList))
