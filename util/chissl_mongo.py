@@ -115,7 +115,7 @@ class ChisslMongo(object):
         
         return obj
     
-    def create_model(self, applicationName, modelName, query={}, project={}, labels={}, drop=False):
+    def create_model(self, applicationName, model='default', query={}, project={}, labels={}, drop=False):
         '''
         Creates a trained model by querying the corresponding collection and fitting
         the corresponding pipeline for the application. Clustering is also run and the
@@ -173,8 +173,8 @@ class ChisslMongo(object):
                 if self.verbose:
                     print('Transforming data', end='...', flush=True)
 
-                model = pydoc.locate(application['pipeline'])
-                X_transform = model.fit_transform(X, y)
+                pipeline = pydoc.locate(application['pipeline'])
+                X_transform = pipeline.fit_transform(X, y)
 
                 if self.verbose:
                     print('OK\nClustering data', end='...', flush=True)
@@ -185,13 +185,13 @@ class ChisslMongo(object):
                     print('OK')
 
                 obj = {'_id': {'application': applicationName,
-                               'model': modelName},
+                               'model': model},
                        'date': datetime.datetime.utcnow(),
                        'query': query,
                        'project': project,
                        'labels': labels,
                        'hist': hist,
-                       'pipeline': Binary(pickle.dumps(model)),
+                       'pipeline': Binary(pickle.dumps(pipeline)),
                        'parents': parents.tolist(),
                        'costs': costs.tolist(),
                        'instances': index,

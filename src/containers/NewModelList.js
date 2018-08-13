@@ -21,6 +21,7 @@ import ValidatedTextArea from '../components/ValidatedTextArea'
 
 import {
   getCurrentApplication,
+  createCreateModelAction
 } from '../actions/api'
 
 import {
@@ -45,7 +46,12 @@ class NewModelList extends React.Component {
   };
 
   render() {
-    const {currentApplication, name, classes, onChange, ...props} = this.props;
+    const {
+      currentApplication,
+      model, labels={}, query={}, project={},
+      classes,
+      onChange, onCreate,
+    } = this.props;
 
     return currentApplication === undefined
       ? <div/>
@@ -62,8 +68,8 @@ class NewModelList extends React.Component {
             <ListItemText
               primary={
                 <ValidatedTextArea
-                  value={name}
-                  onChange={v => onChange('name', v)}
+                  value={model}
+                  onChange={v => onChange('model', v)}
                   validate={d => d}
                 >
                   <TextField
@@ -75,13 +81,16 @@ class NewModelList extends React.Component {
             />
 
             <Button
-              disabled={name === undefined || name === ''}
+              disabled={model === undefined || model === ''}
               variant='contained'
               color='primary'
               className={classes.button}
               onClick={ev => {
                 ev.stopPropagation();
-                console.log('Create')
+                onCreate(
+                  currentApplication,
+                  {model, labels, query, project}
+                );
               }}
             >
               Create
@@ -103,7 +112,7 @@ class NewModelList extends React.Component {
                     <ListItemText
                       primary={
                         <ValidatedTextArea
-                          value={JSON.stringify(props[d] || {})}
+                          value={JSON.stringify(this.props[d] || {})}
                           onChange={v => onChange(d, v)}
                           validate={JSON.parse}
                         >
@@ -123,13 +132,14 @@ class NewModelList extends React.Component {
 
 export default connect(
   state => ({
-    name: state.getIn([...SETUP_PATH, 'name']),
+    model: state.getIn([...SETUP_PATH, 'model']),
     labels: state.getIn([...SETUP_PATH, 'labels']),
     query: state.getIn([...SETUP_PATH, 'query']),
     project: state.getIn([...SETUP_PATH, 'project']),
     currentApplication: getCurrentApplication(state)
   }),
   dispatch => bindActionCreators({
-    onChange: createSetupAction
+    onChange: createSetupAction,
+    onCreate: createCreateModelAction
   }, dispatch)
 )(withStyles(styles)(NewModelList))
