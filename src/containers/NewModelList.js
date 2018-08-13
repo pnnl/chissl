@@ -45,7 +45,7 @@ class NewModelList extends React.Component {
   };
 
   render() {
-    const {currentApplication, classes, onChange, ...props} = this.props;
+    const {currentApplication, name, classes, onChange, ...props} = this.props;
 
     return currentApplication === undefined
       ? <div/>
@@ -61,11 +61,21 @@ class NewModelList extends React.Component {
           >
             <ListItemText
               primary={
-                <TextField fullWidth onClick={ev => ev.stopPropagation()}/>
+                <ValidatedTextArea
+                  value={name}
+                  onChange={v => onChange('name', v)}
+                  validate={d => d}
+                >
+                  <TextField
+                    fullWidth
+                    onClick={ev => ev.stopPropagation()}
+                  />
+                </ValidatedTextArea>
               }
             />
 
             <Button
+              disabled={name === undefined || name === ''}
               variant='contained'
               color='primary'
               className={classes.button}
@@ -113,6 +123,7 @@ class NewModelList extends React.Component {
 
 export default connect(
   state => ({
+    name: state.getIn([...SETUP_PATH, 'name']),
     labels: state.getIn([...SETUP_PATH, 'labels']),
     query: state.getIn([...SETUP_PATH, 'query']),
     project: state.getIn([...SETUP_PATH, 'project']),
