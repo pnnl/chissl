@@ -4,7 +4,13 @@ import {connect} from 'react-redux'
 import {createSelector} from 'reselect'
 import {Map} from 'immutable'
 
-import { withStyles } from '@material-ui/core/styles';
+import {format} from 'd3-format';
+
+import { withStyles } from '@material-ui/core/styles'
+import green from '@material-ui/core/colors/green';
+
+import CircularProgress from '@material-ui/core/CircularProgress';
+import Avatar from '@material-ui/core/Avatar'
 import Collapse from '@material-ui/core/Collapse'
 import List from '@material-ui/core/List'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
@@ -24,7 +30,14 @@ import {
 
 import {createSetupAction} from '../actions/setup'
 
+const withSi = format('.2s');
+const formatAvatar = d => d < 1000 ? d : withSi(d);
+
 const styles = theme => ({
+  avatar: {
+    color: '#fff',
+    backgroundColor: green[500],
+  },
   button: {
     marginRight: theme.spacing.unit * 4,
   },
@@ -56,16 +69,24 @@ class ModelList extends React.Component {
             <ListItem key={k}
               onClick={this.handleClick(k)}
             >
-              <ListItemIcon disabled={!induction.has(k)}>
-                <ImportExportIcon />
-              </ListItemIcon>
+              { v.has('size')
+                  ? <Avatar className={classes.avatar}>
+                      { formatAvatar(v.get('size')) }
+                    </Avatar>
+                  : <CircularProgress />
+              }
 
               <ListItemText
                 primary={k}
                 secondary={`${v.get('labels').size} // ${v.get('date')}`}
               />
 
+              <ListItemIcon disabled={!induction.has(k)}>
+                <ImportExportIcon />
+              </ListItemIcon>
+
               <Button
+                disabled={!v.has('size')}
                 variant='contained'
                 color='primary'
                 className={classes.button}

@@ -245,6 +245,7 @@ class ChisslMongo(object):
         return self.db[collection].aggregate([
             {'$match': {'_id.application': application}},
             {'$project': {'_id': '$_id.model',
+                          'size': {'$size': { '$ifNull': [ '$instances', [] ] }},
                           'date': True,
                           'query': True,
                           'project': True,
