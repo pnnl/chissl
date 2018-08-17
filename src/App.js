@@ -49,7 +49,6 @@ import { withStyles } from '@material-ui/core/styles';
 
 import AppBarContainer from './containers/AppBarContainer';
 import SelectDatasetContainer from './containers/SelectDatasetContainer';
-import QueryContainer from './containers/QueryContainer';
 import InstanceTableContainer from './containers/InstanceTableContainer';
 import UnlabeledDataContainer from './containers/UnlabeledDataContainer';
 import MoreDrawerContainer from './containers/MoreDrawerContainer';

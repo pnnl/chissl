@@ -65,7 +65,11 @@ def start_app(app, mongo, **kwargs):
     @app.route('/api/applications/<application>/transduction/<model>', methods=['GET', 'POST'])
     def get_transduction_model(application, model):
 
-        obj = chissl.get_transduction_model(application, model)
+        if request.method == 'POST':
+            kwargs = request.get_json() or {}
+            obj = chissl.create_model(application, model, drop=True, **kwargs)
+        else:
+            obj = chissl.get_transduction_model(application, model)
         
         if obj:
             del obj['pipeline']

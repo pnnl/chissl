@@ -39,7 +39,7 @@
 */
 
 import {OrderedMap, Map} from 'immutable';
-import {get} from 'axios';
+import {get, post} from 'axios';
 
 import {createAction} from '.';
 import store from '../stores';
@@ -83,43 +83,29 @@ export const createSetDatasetAction = (currentDataset, currentModel) =>
     });
 };
 
-export const createUpdateDatasetAction = query => (dispatch, getState) => {
+export const createUpdateDatasetAction = () => (dispatch, getState) => {
   const state = getState();
   const currentDataset = state.getIn(['ui', 'currentDataset']);
   const currentModel = state.getIn(['ui', 'currentModel']);
 
   dispatch(createAction(
-    {setIn: [['ui', 'query'], query]},
     {delete: ['data']}
   ));
 
-  const tags = query.keySeq()
-    .join(',');
-
   const labels = state.getIn(['ui', 'labels'], Map())
-    .keySeq()
-    .join(',');
+    .toJS();
 
-  const config = {
-    headers: {'Content-Type': 'application/json'},
-    params: {tags, labels},
-  };
+  const keys = {'query': true, 'project': true};
+  const params = state.get('data')
+    .filter((v, k) => k in keys)
+    .toJS();
 
-  get(`/api/${currentDataset}/models/${currentModel}`, config)
+  post(`/api/applications/${currentDataset}/transduction/${currentModel}`, {...params, labels})
     .then(response => console.log('updated some data', response.data) ||
       dispatch(createAction(
         {set: ['data', Map(response.data)]}
       ))
     );
-};
-
-export const createSetQueryAction = value => {
-  const query = Map(value === ''
-    ? []
-    : value.split(',').map(d => [d, 'must'])
-  );
-
-  return createUpdateDatasetAction(query);
 };
 
 export const createOpenDatasetAction = () =>

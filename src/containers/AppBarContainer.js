@@ -48,8 +48,12 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 
 import MenuIcon from '@material-ui/icons/Menu';
+import SaveIcon from '@material-ui/icons/Save'
 
-import {createOpenDatasetAction} from '../actions/ui';
+import {
+  createUpdateDatasetAction,
+  createOpenDatasetAction
+} from '../actions/ui'
 
 import ApplicationSelectDialog from './ApplicationSelectDialog'
 
@@ -85,6 +89,13 @@ const AppBarComponent = ({classes, title, isLoading, onClick, children}) =>
         </Typography>
 
         <DownloadContainer />
+
+        <IconActionButtonContainer
+          color='inherit'
+          action={createUpdateDatasetAction()}
+        >
+          <SaveIcon />
+        </IconActionButtonContainer>
 
         <InteractionStyleContainer />
 
