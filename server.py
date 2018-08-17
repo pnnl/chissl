@@ -62,6 +62,18 @@ def start_app(app, mongo, **kwargs):
 
         return jsonify(as_dict(chissl.list_transduction_models(application)))
 
+    @app.route('/api/applications/<application>/transduction/<model>', methods=['GET', 'POST'])
+    def get_transduction_model(application, model):
+
+        obj = chissl.get_transduction_model(application, model)
+        
+        if obj:
+            del obj['pipeline']
+
+            return jsonify(obj)
+        else:
+            return jsonify({})
+
     @app.route('/api/induction/<application>')
     def list_induction_models(application):
         return jsonify(induction=chissl.list_induction_models(application))
