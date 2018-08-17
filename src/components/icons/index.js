@@ -46,11 +46,11 @@ import './Image.css';
 
 import PopoverComponent from './PopoverComponent'
 
-export const ImageComponent = ({src, title='Drag to another group to change class'}) =>
+export const ImageComponent = ({src={}, title='Drag to another group to change class'}) =>
   <img
     title={title}
     className='image-component'
-    src={src}
+    src={`data:image/${src.type};base64,${src.data}`}
     style={{margin: 5}}
   />
 
