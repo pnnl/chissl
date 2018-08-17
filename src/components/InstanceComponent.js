@@ -59,15 +59,17 @@ const DefaultComponent = ({_id, dataset}) =>
   </div>
 
 
-const InstanceComponent = ({dataset, value, more=[], onShowMore, props={}, ...rest}) => {
+const InstanceComponent = ({collection, component, value, more=[], onShowMore, props={}, ...rest}) => {
+  console.log(collection, component);
+  
   const size = more.length;
-  const Component = Icons[dataset] || DefaultComponent;
+  const Component = Icons[component] || DefaultComponent;
 
   return (
     <div className='instance-component' {...rest}>
       { value &&
-        <FetchURL cached url={`/api/${dataset}/data/instances/${value}`}>
-          <Component dataset={dataset} {...props}/>
+        <FetchURL cached url={`/api/data/${collection}/${value}`}>
+          <Component {...props}/>
         </FetchURL>
       }
       { size > 0 &&

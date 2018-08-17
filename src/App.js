@@ -66,18 +66,15 @@ class App extends Component {
     const {sequential} = this.props;
     return (
       <div className='App'>
-        { <AppBarContainer/> }
+        <AppBarContainer/>
 
-        { /*<MoreDrawerContainer/> */}
+        <MoreDrawerContainer/>
 
-        { /*<SelectDatasetContainer />*/ }
+        <UnlabeledDataContainer/>
 
-        { /* <UnlabeledDataContainer/> */ }
-
-        { /* sequential
+        { sequential
             ? <ActiveLearningTableContainer />
             : <InstanceTableContainer/>
-          */
         }
 
       </div>

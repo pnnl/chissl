@@ -44,23 +44,18 @@ import {get} from 'axios';
 import {createAction} from '.';
 import store from '../stores';
 
-export const createInitAction = () => dispatch =>
-  get('/api/')
-    .then(response =>
-      dispatch(createAction({mergeIn: [['datasets'], response.data]}))
-    );
+export const createSetDatasetAction = (currentDataset, currentModel) =>
+  (dispatch, getState) => {
+    dispatch(createAction(
+      {setIn: [['ui', 'currentDataset'], currentDataset]},
+      {setIn: [['ui', 'currentModel'], currentModel]},
+      {setIn: [['ui', 'datasetsOpenedByUser'], false]},
+      {setIn: [['ui', 'isUnsortedOpen'], true]},
+      {deleteIn: [['ui', 'histogram', 'name']]},
+      {delete: ['data']},
+    ));
 
-export const createSetDatasetAction = (currentDataset, currentModel) => (dispatch, getState) => {
-  dispatch(createAction(
-    {setIn: [['ui', 'currentDataset'], currentDataset]},
-    {setIn: [['ui', 'currentModel'], currentModel]},
-    {setIn: [['ui', 'datasetsOpenedByUser'], false]},
-    {setIn: [['ui', 'isUnsortedOpen'], true]},
-    {deleteIn: [['ui', 'histogram', 'name']]},
-    {delete: ['data']},
-  ));
-
-  get(`/api/${currentDataset}/models/${currentModel}`)
+  get(`/api/applications/${currentDataset}/transduction/${currentModel}`)
     .then(response => {
       console.log('got some data', response.data);
       

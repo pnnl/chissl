@@ -29,6 +29,7 @@ import {
 } from '../actions/api'
 
 import {createSetupAction} from '../actions/setup'
+import {createSetDatasetAction} from '../actions/ui'
 
 const withSi = format('.2s');
 const formatAvatar = d => d < 1000 ? d : withSi(d);
@@ -140,7 +141,7 @@ export default connect(
     })
   ),
   dispatch => bindActionCreators({
-    // onOpen: 
+    onOpen: createSetDatasetAction,
     onClick: createSetupAction
   }, dispatch)
 )(withStyles(styles)(ModelList))
