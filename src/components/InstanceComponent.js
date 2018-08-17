@@ -60,8 +60,6 @@ const DefaultComponent = ({_id, dataset}) =>
 
 
 const InstanceComponent = ({collection, component, value, more=[], onShowMore, props={}, ...rest}) => {
-  console.log(collection, component);
-  
   const size = more.length;
   const Component = Icons[component] || DefaultComponent;
 
