@@ -261,6 +261,12 @@ class ChisslMongo(object):
     def list_induction_models(self, application):
         return self.summarize_models('induction_', application)
 
+    def get_transduction_model(self, application, model):
+        _id = {'application': application,
+               'model': model}
+
+        return self.db.transduction_.find_one({'_id': _id})
+
     def get_induction_model(self, application, model):
         _id = {'application': application,
                'model': model}
