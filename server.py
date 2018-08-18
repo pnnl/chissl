@@ -39,6 +39,8 @@ import os
 from flask import Flask, jsonify, request
 from util import chissl_mongo as cm
 
+from functools import lru_cache
+
 def as_dict(li):
     return {x['_id']: x for x in li}
 
@@ -78,13 +80,29 @@ def start_app(app, mongo, **kwargs):
         else:
             return jsonify({})
 
-    @app.route('/api/induction/<application>')
-    def list_induction_models(application):
-        return jsonify(induction=chissl.list_induction_models(application))
+    @app.route('/api/applications/<application>/induction/', methods=['POST', 'GET'])
+    def deploy_model(application):
+        if request.method == 'POST':
+            data = request.get_json() or {}
+            print(data)
 
-    @app.route('/api/induction/<application>/<model>')
-    def list_induction_model(application, model):
-        return jsonify(chissl.get_induction_model(application, model))
+            model = data['model']
+            labels = data['labels']
+            chissl.deploy(application, model, labels, drop=True)
+
+        return jsonify(as_dict(chissl.list_induction_models(application)))
+
+    @lru_cache()
+    def get_cached_induction_model(application, model):
+        chissl.get_induction_model(application, model)
+
+    @app.route('/api/applications/<application>/induction/<model>', methods=['POST'])
+    def predict(application, model):
+        pipeline = get_cached_induction_model(application, model)
+        X = request.get_json().get('X', [])
+        y = pipeline.predict(X)
+
+        return jsonify(y=y)
 
     @app.route('/api/data/<collection>/<_id>')
     def get_data(collection, _id):
