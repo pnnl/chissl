@@ -14,7 +14,7 @@ class ValidatedTextArea extends React.Component {
     } catch(exn) {
       this.setState({error: String(exn)});
     }
-  }, 1000)
+  }, 100)
 
   handleSetValue = (value, emit) => {
     this.setState({value});

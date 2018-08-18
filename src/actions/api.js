@@ -1,29 +1,81 @@
-import {fromJS} from 'immutable'
+import {isKeyed, fromJS, Map, OrderedMap} from 'immutable'
 import {get, post} from 'axios'
 
 import {createAction} from '.'
 
-export const getCurrentApplication = state =>
-  state.getIn(['ui', 'path'], [])[2]
+const DEFAULT_PATH = ['api', 'recent'];
+const CURRENT_MODEL_PATH = ['api', 'currentModel'];
 
-export const createMergeURLAction = (method, url, ...args) => dispatch => {
-  const path = url.split('/').filter(s => s.length);
+const reviver = (key, value) =>
+  isKeyed(value)
+    ? value.toOrderedMap()
+    : value.toList()
 
-  dispatch(createAction({setIn: [['ui', 'path'], path]}));
+export const createMergeURLAction = (promise, saveTo=DEFAULT_PATH) =>
+  dispatch =>
+    promise
+      .then(response => {
+        const path = response.config.url
+          .split('/')
+          .filter(s => s.length);
 
-  method(url, ...args).then(response =>
-    dispatch(createAction({mergeIn: [
-      path,
-      fromJS(response.data)
-    ]}))
-  )
+        dispatch(createAction({
+          setIn: [saveTo, path],
+          mergeDeepIn: [
+            path,
+            fromJS(response.data, reviver)
+          ]
+        }));
+      })
+
+export const getCurrentNames = (state, path=DEFAULT_PATH) => {
+  const data = state.getIn(path, []);
+  return {
+    application: data[2],
+    model: data[3]
+  };
 }
 
+export const getCurrentData = (state, path) => {
+  const {application, model} = getCurrentNames(state, path);
+  return state.getIn([
+    'api',
+    'applications',
+    application,
+    'transduction',
+    model
+  ]);
+}
+
+export const createSetDatasetAction = (application, model) =>
+  createMergeURLAction(
+    get(`/api/applications/${application}/transduction/${model}`),
+    CURRENT_MODEL_PATH
+  )
+
+export const createUpdateDatasetAction = () => (dispatch, getState) => {
+  const state = getState();
+  const {application, model} = getCurrentNames(state, CURRENT_MODEL_PATH);
+
+  const keys = {'labels': true, 'query': true, 'project': true};
+  const params = getCurrentData(state)
+    .filter((v, k) => k in keys)
+    .toJS();
+
+  createMergeURLAction(
+    post(
+      `/api/applications/${application}/transduction/${model}`,
+      params
+    ),
+    CURRENT_MODEL_PATH
+  )(dispatch, getState);
+};
+
 export const createListApplicationsAction = () =>
-  createMergeURLAction(get, '/api/applications/')
+  createMergeURLAction(get('/api/applications/'))
 
 export const createSetApplicationAction = application =>
-  createMergeURLAction(get, `/api/applications/${application}/`)
+  createMergeURLAction(get(`/api/applications/${application}/`))
 
 export const createCreateModelAction = (application, data={}) => 
   (dispatch, getState) => {
@@ -34,6 +86,21 @@ export const createCreateModelAction = (application, data={}) =>
                fromJS(data).set('date', String(new Date())) ]
     }));
 
-    createMergeURLAction(post, url, data)(dispatch, getState);
+    createMergeURLAction(
+      post(url, data)
+    )(dispatch, getState);
   }
 
+export const createDeployModelAction = () =>
+  (dispatch, getState) => {
+    const state = getState();
+    const {application, model} = getCurrentNames(state, CURRENT_MODEL_PATH);
+    const labels = getCurrentData(state)
+      .get('labels', Map())
+      .toJS();
+
+    createMergeURLAction(post(
+      `/api/applications/${application}/induction/`,
+      {model, labels}
+    ))(dispatch, getState);
+  }

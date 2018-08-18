@@ -20,7 +20,7 @@ import ExpandMore from '@material-ui/icons/ExpandMore'
 import ValidatedTextArea from '../components/ValidatedTextArea'
 
 import {
-  getCurrentApplication,
+  getCurrentNames,
   createCreateModelAction
 } from '../actions/api'
 
@@ -47,13 +47,13 @@ class NewModelList extends React.Component {
 
   render() {
     const {
-      currentApplication,
+      application,
       model, labels={}, query={}, project={},
       classes,
       onChange, onCreate,
     } = this.props;
 
-    return currentApplication === undefined
+    return application === undefined
       ? <div/>
       : <List
           subheader={
@@ -88,7 +88,7 @@ class NewModelList extends React.Component {
               onClick={ev => {
                 ev.stopPropagation();
                 onCreate(
-                  currentApplication,
+                  application,
                   {model, labels, query, project}
                 );
               }}
@@ -136,7 +136,7 @@ export default connect(
     labels: state.getIn([...SETUP_PATH, 'labels']),
     query: state.getIn([...SETUP_PATH, 'query']),
     project: state.getIn([...SETUP_PATH, 'project']),
-    currentApplication: getCurrentApplication(state)
+    ...getCurrentNames(state)
   }),
   dispatch => bindActionCreators({
     onChange: createSetupAction,

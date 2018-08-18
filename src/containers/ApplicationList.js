@@ -9,7 +9,7 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import ListItemText from '@material-ui/core/ListItemText'
 
 import {
-  getCurrentApplication,
+  getCurrentNames,
   createSetApplicationAction
 } from '../actions/api'
 
@@ -39,7 +39,7 @@ export const ApplicationList = ({applications=Map(), value, onClick}) =>
 export default connect(
   state => ({
     applications: state.getIn(['api', 'applications']),
-    value: getCurrentApplication(state)
+    value: getCurrentNames(state).application
   }),
   dispatch => bindActionCreators({
     onClick: createSetApplicationAction

@@ -49,11 +49,16 @@ import Typography from '@material-ui/core/Typography';
 
 import MenuIcon from '@material-ui/icons/Menu';
 import SaveIcon from '@material-ui/icons/Save'
+import ImportExportIcon from '@material-ui/icons/ImportExport'
+
+import {
+    createOpenDatasetAction
+} from '../actions/ui'
 
 import {
   createUpdateDatasetAction,
-  createOpenDatasetAction
-} from '../actions/ui'
+  createDeployModelAction
+} from '../actions/api'
 
 import ApplicationSelectDialog from './ApplicationSelectDialog'
 
@@ -89,6 +94,13 @@ const AppBarComponent = ({classes, title, isLoading, onClick, children}) =>
         </Typography>
 
         <DownloadContainer />
+
+        <IconActionButtonContainer
+          color='inherit'
+          action={createDeployModelAction()}
+        >
+          <ImportExportIcon />
+        </IconActionButtonContainer>
 
         <IconActionButtonContainer
           color='inherit'

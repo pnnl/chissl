@@ -58,7 +58,13 @@ import Avatar from '@material-ui/core/Avatar'
 
 import Accordion from '../components/Accordion'
 
-import {createSetDatasetAction, createCloseDatasetAction} from '../actions/ui';
+import {
+    createSetDatasetAction
+} from '../actions/api'
+
+import {
+  createCloseDatasetAction
+} from '../actions/ui';
 
 import InstanceComponent from '../components/InstanceComponent'
 

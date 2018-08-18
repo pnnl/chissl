@@ -24,12 +24,12 @@ import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
 
 import {
-  getCurrentApplication,
+  getCurrentNames,
+  createSetDatasetAction,
   createSetApplicationAction
 } from '../actions/api'
 
 import {createSetupAction} from '../actions/setup'
-import {createSetDatasetAction} from '../actions/ui'
 
 const withSi = format('.2s');
 const formatAvatar = d => d < 1000 ? d : withSi(d);
@@ -56,13 +56,13 @@ class ModelList extends React.Component {
   };
 
   render() {
-    const {currentApplication, transduction=Map(), induction=Map(), onOpen, onClick, classes} = this.props;
+    const {application, transduction=Map(), induction=Map(), onOpen, onClick, classes} = this.props;
 
     return transduction.size > 0 &&
       <List
       subheader={
         <ListSubheader component='div'>
-          { `Select a model from: ${currentApplication}` }
+          { `Select a model from: ${application}` }
         </ListSubheader>
       }
       >
@@ -93,7 +93,7 @@ class ModelList extends React.Component {
                 className={classes.button}
                 onClick={ev => {
                   ev.stopPropagation();
-                  onOpen && onOpen(currentApplication, k)
+                  onOpen && onOpen(application, k)
                 }}
               >
                 Open
@@ -132,12 +132,12 @@ class ModelList extends React.Component {
 export default connect(
   createSelector(
     [ state => state.getIn(['api', 'applications']),
-      getCurrentApplication
+      state => getCurrentNames(state)
     ],
-    (applications=Map(), currentApplication) => ({
-      currentApplication,
-      transduction: applications.getIn([currentApplication, 'transduction']),
-      induction: applications.getIn([currentApplication, 'induction']),
+    (applications=Map(), {application}) => ({
+      application,
+      transduction: applications.getIn([application, 'transduction']),
+      induction: applications.getIn([application, 'induction']),
     })
   ),
   dispatch => bindActionCreators({
