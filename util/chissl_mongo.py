@@ -239,7 +239,7 @@ class ChisslMongo(object):
             self.db.induction_\
                 .insert_one(obj)
             
-            return obj
+            return pipeline
 
     def summarize_models(self, collection, application):
         return self.db[collection].aggregate([

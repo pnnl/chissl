@@ -80,6 +80,8 @@ def start_app(app, mongo, **kwargs):
         else:
             return jsonify({})
 
+    deployed = {}
+
     @app.route('/api/applications/<application>/induction/', methods=['POST', 'GET'])
     def deploy_model(application):
         if request.method == 'POST':
@@ -88,21 +90,22 @@ def start_app(app, mongo, **kwargs):
 
             model = data['model']
             labels = data['labels']
-            chissl.deploy(application, model, labels, drop=True)
+            deployed[application, model] = chissl.deploy(application, model, labels, drop=True)
 
         return jsonify(as_dict(chissl.list_induction_models(application)))
 
-    @lru_cache()
-    def get_cached_induction_model(application, model):
-        chissl.get_induction_model(application, model)
-
     @app.route('/api/applications/<application>/induction/<model>', methods=['POST'])
     def predict(application, model):
-        pipeline = get_cached_induction_model(application, model)
-        X = request.get_json().get('X', [])
-        y = pipeline.predict(X)
+        if (application, model) not in deployed:
+            deployed[application, model] = chissl.get_induction_model(application, model)
+            
+        pipeline = deployed[application, model]
 
-        return jsonify(y=y)
+        if pipeline:
+            X = request.get_json().get('X', [])
+            y = pipeline.predict(X)
+
+            return jsonify(y=y.tolist())
 
     @app.route('/api/data/<collection>/<_id>')
     def get_data(collection, _id):
