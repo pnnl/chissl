@@ -49,6 +49,9 @@ export default connect(
     onDragOver: preventDefault
   }),
   (dispatch, {group}) => ({
-    onDrop: ev => dispatch(createSetLabelAction(JSON.parse(ev.dataTransfer.getData('text')), group))
+    onDrop: ev => dispatch(createSetLabelAction(
+      JSON.parse(ev.dataTransfer.getData('text')),
+      group
+    ))
   })
 );

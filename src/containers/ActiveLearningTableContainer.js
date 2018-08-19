@@ -133,7 +133,10 @@ const preventDefault = ev => ev.preventDefault();
 const ActiveLearningTableRow = connect(
   null,
   (dispatch, {group}) => ({
-    onDrop: ev => dispatch(createSetLabelAction(JSON.parse(ev.dataTransfer.getData('text')), +group))
+    onDrop: ev => dispatch(createSetLabelAction(
+      JSON.parse(ev.dataTransfer.getData('text')),
+      group
+    ))
   })
 )(ActiveLearningTableRowComponent);
 

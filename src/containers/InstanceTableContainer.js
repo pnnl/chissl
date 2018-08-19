@@ -199,7 +199,10 @@ const InstanceRowContainer = connect(
     data: getNestedDataFromLabels(state),
   }),
   (dispatch, {group}) => ({
-    onDrop: ev => dispatch(createSetLabelAction(JSON.parse(ev.dataTransfer.getData('text')), +group))
+    onDrop: ev => dispatch(createSetLabelAction(
+      JSON.parse(ev.dataTransfer.getData('text')),
+      group
+    ))
   })
 )(InstanceRowComponent);
 
