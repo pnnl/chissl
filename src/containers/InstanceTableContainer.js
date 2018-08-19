@@ -112,7 +112,7 @@ const LabeledContainer = connect(
     ],
     (labels, group) => {
       const values = labels
-        .filter(v => v === +group)
+        .filter(v => v === group)
         .keySeq()
         .toArray();
 
