@@ -33,8 +33,11 @@ export const prepareDataForScatter = createSelector(
     }))
 )
 
-const GroupHexbin = ({data=[], group, color='lightgray'}) =>
-  <ContainerDimensions>
+const GroupHexbin = ({data=[], group, color}) => {
+  const getColor = d =>
+    sum(d, d => d.group === group) > 0 ? color : 'none';
+
+  return <ContainerDimensions>
     { ({ width }) =>
         <Chart
           width={width}
@@ -46,18 +49,19 @@ const GroupHexbin = ({data=[], group, color='lightgray'}) =>
         >
           <HexbinPlot
             radius={10}
-            style={{fill: 'none', stroke: 'black', strokeWidth: 1}}
+            style={{stroke: 'darkgray', strokeWidth: 1}}
             eachPath={d => ({
-              style: {fill: sum(d, ({label}) => label === group)}
+              style: {fill: getColor(d)}
             })}
           />
         </Chart>
     }
   </ContainerDimensions>
+}
 
 export default connect(
   (state, {group}) => ({
     data: prepareDataForScatter(state),
-    color: state.getIn([...GROUP_COLOR_PATH, group])
+    color: group === -1 ? 'lightgray' : state.getIn([...GROUP_COLOR_PATH, group])
   })
 )(GroupHexbin)
