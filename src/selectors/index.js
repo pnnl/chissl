@@ -119,8 +119,6 @@ export const getPredictions = createSelector(
       .map(([k, v]) => [lookup.get(k), v])
       .toArray();
 
-    console.log(labels);
-
     const previousLabels = labels.slice(0, -1);
 
     // re-apply all of the n - 1 previous labels
