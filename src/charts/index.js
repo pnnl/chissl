@@ -48,7 +48,7 @@ export const ScatterPlot = ({data, x, y, xScale, yScale, r, size=10}) => {
   </g>
 }
 
-export const HexbinPlot = ({data, x, y, xScale, yScale, radius, ...props}) => {
+export const HexbinPlot = ({data, x, y, xScale, yScale, radius, eachPath, ...props}) => {
   const [xmin, xmax] = xScale.range();
   const [ymin, ymax] = yScale.range();
 
@@ -59,10 +59,11 @@ export const HexbinPlot = ({data, x, y, xScale, yScale, radius, ...props}) => {
     .y((d, i) => yScale(y(d, i)));
 
   return <g {...props}>
-    { bins(data).map(({x, y}, i) =>
+    { bins(data).map((d, i) =>
         <path
           key={i}
-          transform={`translate(${x}, ${y})`}
+          {...(eachPath && eachPath(d, i))}
+          transform={`translate(${d.x}, ${d.y})`}
           d={bins.hexagon()}
         />
       )

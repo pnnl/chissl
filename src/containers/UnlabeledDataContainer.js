@@ -56,7 +56,7 @@ import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 
 import ExpandableCard from '../components/ExpandableCard';
 
-import UnlabeledDataScatter from './UnlabeledDataScatter'
+import GroupHexbin from './GroupHexbin'
 
 import {getNestedDataFromLabels} from '../selectors';
 
@@ -123,7 +123,7 @@ const UnlabeledDataComponent = ({data, instances, labels, onRemoveLabel, onAddLa
         }
       >
         <Grid container>
-          <Grid item xs={12} sm={8}>
+          <Grid item xs={12} sm={9}>
             { values
                 ? [...values.keys()].map(key =>
                     <SuggestionsContainer group={-1} subGroup={+key} key={key}/>
@@ -134,8 +134,8 @@ const UnlabeledDataComponent = ({data, instances, labels, onRemoveLabel, onAddLa
             }
         </Grid>
 
-          <Grid item xs={12} sm={4}>
-            <UnlabeledDataScatter />
+          <Grid item xs={12} sm={3}>
+            <GroupHexbin group={-1} />
           </Grid>
         </Grid>
       </ExpandableCard>
