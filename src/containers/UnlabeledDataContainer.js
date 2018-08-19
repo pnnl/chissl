@@ -46,12 +46,12 @@ import {Map} from 'immutable'
 import {format} from 'd3-format';
 import {sum} from 'd3-array';
 
+import { withStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography'
+import Button from '@material-ui/core/Button'
 
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
-
-import IconActionButtonContainer from './IconActionButtonContainer';
 
 import ExpandableCard from '../components/ExpandableCard';
 
@@ -73,25 +73,22 @@ import {SuggestionsContainer} from './InstanceTableContainer'
 const withSi = format('.2s');
 const formatAvatar = d => d < 1000 ? d : withSi(d);
 
-const AddAllActionButton = ({values, ...props}) =>
-  <IconActionButtonContainer
-    aria-label='Add all'
-    action={createCreateGroupAction(values)}
-    {...props}
-  >
-    <AddCircleIcon/>
-  </IconActionButtonContainer>
+const styles = theme => ({
+  button: {
+    margin: theme.spacing.unit,
+  },
+  leftIcon: {
+    marginRight: theme.spacing.unit,
+  },
+  rightIcon: {
+    marginLeft: theme.spacing.unit,
+  },
+  iconSmall: {
+    fontSize: 20,
+  },
+});
 
-const RemoveAllActionButton = props =>
-  <IconActionButtonContainer
-    aria-label='Remove all'
-    action={createClearGroupAction()}
-    {...props}
-  >
-    <RemoveCircleIcon />
-  </IconActionButtonContainer>
-
-const UnlabeledDataComponent = ({data, instances, labels, onRemoveLabel}) => {
+const UnlabeledDataComponent = ({data, instances, labels, onRemoveLabel, onAddLabels, classes}) => {
   const values = data.get('-1');
 
   return (
@@ -109,10 +106,15 @@ const UnlabeledDataComponent = ({data, instances, labels, onRemoveLabel}) => {
         }
         actions={
           <div>
-            <AddAllActionButton
-              disabled={values === undefined}
-              values={values ? [...values.values()].map(d => instances[d[0]]) : []} />
-            <RemoveAllActionButton disabled={labels.size === 0}/>
+            <Button
+              className={classes.button}
+              variant="contained"
+              color="primary"
+              onClick={() => onAddLabels(values ? [...values.values()].map(d => instances[d[0]]) : [])}
+            >
+              Add all
+              <AddCircleIcon className={classes.rightIcon} />
+            </Button> 
           </div>
         }
       >
@@ -138,6 +140,7 @@ export default connect(
     labels: getCurrentData(state, CURRENT_MODEL_PATH).get('parents', []),
   }),
   dispatch => bindActionCreators({
+    onAddLabels: createCreateGroupAction,
     onRemoveLabel: createRemoveLabelAction
   }, dispatch)  
-)(UnlabeledDataComponent);
+)(withStyles(styles)(UnlabeledDataComponent));
