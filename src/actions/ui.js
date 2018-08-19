@@ -80,3 +80,8 @@ export const createSetHistogramNameAction = value =>
 
 export const createSetActiveLearningStyle = value =>
   createAction({setIn: [['ui', 'activeLearningStyle'], value]});
+
+export const GROUP_COLOR_PATH = ['ui', 'groupColors'];
+
+export const createSetGroupColorAction = (group, color) =>
+  createAction({setIn: [[...GROUP_COLOR_PATH, group], color]})

@@ -20,6 +20,7 @@
     "immutable": "^4.0.0-rc.9",
     "react": "^16.0.0",
     "react-autosuggest": "^9.3.2",
+    "react-color": "^2.14.1",
     "react-dom": "^16.0.0",
     "react-redux": "^5.0.6",
     "react-select": "^1.1.0",

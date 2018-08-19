@@ -52,10 +52,14 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
+import Toolbar from '@material-ui/core/Toolbar'
+
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent'
 
 import CloseIcon from '@material-ui/icons/Close';
+
+import GroupColorButton from './GroupColorButton'
 
 import {getPredictions, getNestedDataFromLabels} from '../selectors';
 
@@ -161,13 +165,17 @@ const InstanceRowComponent = ({data, group, histogram, onDragOver, onDrop}) =>
     </TableCell>
 
     <TableCell>
-      <div style={{marginBottom: 10, marginTop: 10}}>
+      <Toolbar disableGutters>
+        <GroupColorButton
+          style={{marginRight: 15}}
+          group={group}
+        />
         <GroupName
           value={group}
           style={{width: 150}}
           placeholder={`Group ${group}`}
         />
-      </div>
+      </Toolbar>
 
       <LabeledContainer group={group} />
     </TableCell>
