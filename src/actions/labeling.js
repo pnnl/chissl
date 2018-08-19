@@ -1,4 +1,4 @@
-import {OrderedMap} from 'immutable';
+import {Set, OrderedMap} from 'immutable';
 
 import {createAction} from '.';
 import store from '../stores';
@@ -14,16 +14,28 @@ export const createRemoveLabelAction = k =>
   createAction({deleteIn: [getModelPath('labels', k)]});
 
 export const createCreateGroupAction = keys => {
-  const labels = store.getState().getIn(getModelPath('labels'), OrderedMap());
+  const labels_path = getModelPath('labels');
+  const labels = store.getState().getIn(labels_path, OrderedMap());
 
-  const n = labels.size ? labels.max() + 1 : 0;
+  const groups = Set(labels.valueSeq());
 
-  const newLabels = labels.withMutations(labels =>
+  const groupName = i => `Group ${i}`;
+
+  let i = 0;
+  while (groups.has(groupName(i))) {
+    i++;
+  }
+
+  const newGroupName = groupName(i);
+
+  const newLabels = OrderedMap(
     (keys instanceof Array ? keys : [keys])
-      .map((k,i) => labels.set(k, i + n))
+      .map(k => [k, newGroupName])
   );
 
-  return createAction({setIn: [getModelPath('labels'), newLabels]});
+  console.log('new labels', newLabels.toJS());
+
+  return createAction({mergeIn: [labels_path, newLabels]});
 }
 
 export const createClearGroupAction = () =>
@@ -36,5 +48,16 @@ export const createDeleteGroupAction = group => {
   return createAction(
     {setIn: [getModelPath('labels'), labels]}
   );
+}
+
+export const createRenameGroupAction = (oldName, newName) => {
+  console.log(oldName, '->', newName);
+
+  const state = store.getState();
+  const labels_path = getModelPath('labels')
+  const labels = state.getIn(labels_path, OrderedMap())
+    .map(v => v === oldName ? newName : v);
+
+  return createAction({setIn: [labels_path, labels]});
 }
 

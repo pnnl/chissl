@@ -73,7 +73,7 @@ import {
 import InstanceContainer from './InstanceContainer';
 import IconActionButtonContainer from './IconActionButtonContainer';
 import GroupHistogramContainer, {GroupHistogramSelect} from './GroupHistogramContainer';
-import {TextFieldContainer}  from './SimpleContainers';
+import GroupName  from './GroupName'
 
 const filterBorderlines = (values, dist, eps=1) => {
   const u = mean(values, dist);
@@ -162,8 +162,8 @@ const InstanceRowComponent = ({data, group, histogram, onDragOver, onDrop}) =>
 
     <TableCell>
       <div style={{marginBottom: 10, marginTop: 10}}>
-        <TextFieldContainer
-          path={`ui.groupNames.${group}`}
+        <GroupName
+          value={group}
           style={{width: 150}}
           placeholder={`Group ${group}`}
         />
