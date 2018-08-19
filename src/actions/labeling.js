@@ -33,8 +33,6 @@ export const createCreateGroupAction = keys => {
       .map(k => [k, newGroupName])
   );
 
-  console.log('new labels', newLabels.toJS());
-
   return createAction({mergeIn: [labels_path, newLabels]});
 }
 
