@@ -108,6 +108,7 @@ const UnlabeledDataComponent = ({data, instances, labels, onRemoveLabel, onAddLa
           <div>
             <Button
               className={classes.button}
+              disabled={!values}
               variant="contained"
               color="primary"
               onClick={() => onAddLabels(values ? [...values.values()].map(d => instances[d[0]]) : [])}
