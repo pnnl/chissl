@@ -64,6 +64,12 @@ import {
   createDeleteGroupAction,
 } from '../actions/ui';
 
+import {
+  CURRENT_MODEL_PATH,
+  getCurrentData
+} from '../actions/api'
+
+
 import InstanceContainer from './InstanceContainer';
 import IconActionButtonContainer from './IconActionButtonContainer';
 import GroupHistogramContainer, {GroupHistogramSelect} from './GroupHistogramContainer';
@@ -82,7 +88,7 @@ const BorderlinesContainer = connect(
   () => createSelector(
     [ getNestedDataFromLabels,
       getPredictions,
-      state => state.getIn(['data', 'instances']),
+      state => getCurrentData(state, CURRENT_MODEL_PATH).get('instances', []),
       (state, {group}) => group
     ],
     (data, {distances}, instances, group) => {
@@ -101,7 +107,7 @@ const BorderlinesContainer = connect(
 
 const LabeledContainer = connect(
   () => createSelector(
-    [ state => state.getIn(['ui', 'labels'], OrderedMap()),
+    [ state => getCurrentData(state, CURRENT_MODEL_PATH).get('labels', OrderedMap()),
       (state, {group}) => group
     ],
     (labels, group) => {
@@ -123,10 +129,10 @@ const LabeledContainer = connect(
 export const SuggestionsContainer = connect(
   () => createSelector(
     [ getNestedDataFromLabels,
-      state => state.getIn(['data', 'instances']),
+      state => getCurrentData(state, CURRENT_MODEL_PATH).get('instances', []),
       (state, {group}) => group,
       (state, {subGroup}) => subGroup,
-      state => state.getIn(['ui', 'labels'])
+      state => getCurrentData(state, CURRENT_MODEL_PATH).get('labels', OrderedMap())
     ],
     (data, instances, group, subGroup, labels) => {
       const values = data.get(group).get(subGroup)
@@ -244,7 +250,7 @@ const InstanceTableContainer = ({data, histogram, ...rest}) =>
 export default connect(
   state => ({
     data: getNestedDataFromLabels(state),
-    histogram: Map(state.getIn(['data', 'hist'])).size > 0
+    histogram: getCurrentData(state, CURRENT_MODEL_PATH).get('histogram', Map()).size > 0
   }),
   dispatch => bindActionCreators({
   }, dispatch)

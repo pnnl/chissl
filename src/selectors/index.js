@@ -39,20 +39,28 @@
 */
 
 import {createSelector} from 'reselect';
-import {Map, OrderedMap} from 'immutable';
+import {List, Map, OrderedMap} from 'immutable';
 import {range} from 'd3-array';
 import {nest} from 'd3-collection'
 
 import {getSubGroups, applyLabel} from '../dendrogram';
 
+import {
+  CURRENT_MODEL_PATH,
+  getCurrentData
+} from '../actions/api'
+
 export const getDendrogram = createSelector(
   [
-    state => state.getIn(['data', 'instances'], []),
-    state => state.getIn(['data', 'parents'], []),
-    state => state.getIn(['data', 'costs'], [])
+    state => getCurrentData(state, CURRENT_MODEL_PATH).get('instances', []),
+    state => getCurrentData(state, CURRENT_MODEL_PATH).get('parents', []),
+    state => getCurrentData(state, CURRENT_MODEL_PATH).get('costs', [])
   ],
   (instances, parents, costs) => {
-    parents = parents.map((d,i) => d === undefined ? i : d);
+    console.log(instances, parents, costs);
+
+    parents = parents
+      .map((d, i) => d === undefined ? i : d);
 
     const sizes = (new Array(parents.length)).fill(0);
 

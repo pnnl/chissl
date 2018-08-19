@@ -43,21 +43,30 @@ import {Map} from 'immutable'
 
 import InstanceComponent from '../components/InstanceComponent';
 
+import {
+  getCurrentNames,
+  CURRENT_MODEL_PATH
+} from '../actions/api'
+
 import {createShowMoreAction, createCreateGroupAction} from '../actions/ui';
 
 export default connect(
   (state, {value, ...rest}) => {
-    const application = state.getIn([
-      'api',
-      'applications',
-      state.getIn(['ui', 'currentDataset'])
-    ], Map());
+    const {application} = getCurrentNames(state, CURRENT_MODEL_PATH);
+    const applicationData = state.getIn(
+      [
+        'api',
+        'applications',
+        application
+      ],
+      Map()
+    );
 
     return {
-      props: state.getIn(['data', 'props']),
+      // props: state.getIn(['data', 'props']),
       draggable: true,
-      collection: application.get('collection'),
-      component: application.get('component'),
+      collection: applicationData.get('collection'),
+      component: applicationData.get('component'),
       ...rest
     };
   },

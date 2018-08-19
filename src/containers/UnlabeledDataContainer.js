@@ -57,6 +57,11 @@ import ExpandableCard from '../components/ExpandableCard';
 
 import {getNestedDataFromLabels} from '../selectors';
 
+import {
+  CURRENT_MODEL_PATH,
+  getCurrentData
+} from '../actions/api'
+
 import {createCreateGroupAction, createClearGroupAction, createRemoveLabelAction} from '../actions/ui';
 
 import {SuggestionsContainer} from './InstanceTableContainer'
@@ -125,8 +130,8 @@ const UnlabeledDataComponent = ({data, instances, labels, onRemoveLabel}) => {
 export default connect(
   state => ({
     data: getNestedDataFromLabels(state),
-    instances: state.getIn(['data', 'instances']),
-    labels: state.getIn(['ui', 'labels'], Map())
+    instances: getCurrentData(state, CURRENT_MODEL_PATH).get('instances', []),
+    labels: getCurrentData(state, CURRENT_MODEL_PATH).get('parents', []),
   }),
   dispatch => bindActionCreators({
     onRemoveLabel: createRemoveLabelAction

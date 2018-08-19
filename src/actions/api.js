@@ -3,13 +3,13 @@ import {get, post} from 'axios'
 
 import {createAction} from '.'
 
-const DEFAULT_PATH = ['api', 'recent'];
-const CURRENT_MODEL_PATH = ['api', 'currentModel'];
+export const DEFAULT_PATH = ['api', 'recent'];
+export const CURRENT_MODEL_PATH = ['api', 'currentModel'];
 
 const reviver = (key, value) =>
   isKeyed(value)
     ? value.toOrderedMap()
-    : value.toList()
+    : value.toArray()
 
 export const createMergeURLAction = (promise, saveTo=DEFAULT_PATH) =>
   dispatch =>
@@ -36,16 +36,8 @@ export const getCurrentNames = (state, path=DEFAULT_PATH) => {
   };
 }
 
-export const getCurrentData = (state, path) => {
-  const {application, model} = getCurrentNames(state, path);
-  return state.getIn([
-    'api',
-    'applications',
-    application,
-    'transduction',
-    model
-  ]);
-}
+export const getCurrentData = (state, path=DEFAULT_PATH) =>
+  state.getIn(state.getIn(path, []), Map())
 
 export const createSetDatasetAction = (application, model) =>
   createMergeURLAction(
