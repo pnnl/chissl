@@ -9,7 +9,7 @@ import {
   getModelPath
 } from '../actions/api'
 
-import Chart, {ScatterPlot} from '../charts'
+import Chart, {HexbinPlot, ScatterPlot} from '../charts'
 
 const UnlabeledDataScatter = ({data=[], classes}) =>
   <ContainerDimensions>
@@ -17,12 +17,15 @@ const UnlabeledDataScatter = ({data=[], classes}) =>
         <Chart
           width={width}
           height={width}
-          margin={10}
+          margin={15}
           data={data}
           x={0}
           y={1}
         >
-          <ScatterPlot radius={d => 5}/>
+          <HexbinPlot
+            radius={10}
+            style={{fill: 'none', stroke: 'black', strokeWidth: 1}}
+          />
         </Chart>
     }
   </ContainerDimensions>

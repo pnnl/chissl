@@ -2,6 +2,7 @@ import React from 'react'
 
 import {scaleLinear} from 'd3-scale'
 import {extent} from 'd3-array'
+import {hexbin} from 'd3-hexbin'
 
 const constScale = value => {
   function scale() {
@@ -47,6 +48,27 @@ export const ScatterPlot = ({data, x, y, xScale, yScale, r, size=10}) => {
   </g>
 }
 
+export const HexbinPlot = ({data, x, y, xScale, yScale, radius, ...props}) => {
+  const [xmin, xmax] = xScale.range();
+  const [ymin, ymax] = yScale.range();
+
+  const bins = hexbin()
+    .radius(radius)
+    .extent([[xmin, ymin], [xmax - xmin, ymax - ymin]])
+    .x((d, i) => xScale(x(d, i)))
+    .y((d, i) => yScale(y(d, i)));
+
+  return <g {...props}>
+    { bins(data).map(({x, y}, i) =>
+        <path
+          key={i}
+          transform={`translate(${x}, ${y})`}
+          d={bins.hexagon()}
+        />
+      )
+    }
+  </g>
+}
 const Chart = ({data=[], width, height, x, y, margin=0, children, ...props}) => {
   const {
     top=margin,
