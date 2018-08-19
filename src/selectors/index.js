@@ -116,17 +116,15 @@ export const getPredictions = createSelector(
 
     const {classes, distances, key} = predictions;
 
-    const labelsAsEntries = labels
+    labels = labels
       .entrySeq()
       .map(([k, v]) => [lookup.get(k), v])
       .toArray();
 
-    // check if the previous result is cached in predictions
-    if (key === JSON.stringify(labelsAsEntries.slice(0, -1))) {
-      // just apply the most recent labeling
-      const [k, v] = labelsAsEntries[labelsAsEntries.length - 1];
-      applyLabel(dendrogram, classes, distances, k, v);
-    } else {
+    const previousLabels = labels.slice(0, -1);
+
+    // re-apply all of the n - 1 previous labels
+    if (key !== JSON.stringify(previousLabels)) {
       console.log('cache miss');
 
       // initialize prediction data
@@ -134,12 +132,22 @@ export const getPredictions = createSelector(
       distances.fill(Infinity);
 
       // re-apply all of the labelings
-      labelsAsEntries.forEach(([k, v]) =>
+      previousLabels.forEach(([k, v]) =>
         applyLabel(dendrogram, classes, distances, k, v)
       );
     }
 
-    return {classes, distances, key: JSON.stringify(labelsAsEntries)};
+    const previousClasses = [...classes];
+
+    // apply the most recent label
+    if (labels.length) {
+      const [k, v] = labels[labels.length - 1];
+      applyLabel(dendrogram, classes, distances, k, v);
+    }
+
+    predictions.key = JSON.stringify(labels);
+
+    return {previousClasses, classes, distances};
   }
 );
 
