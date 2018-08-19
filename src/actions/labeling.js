@@ -46,11 +46,12 @@ export const createClearGroupAction = () =>
   createAction({setIn: [getModelPath('labels'), OrderedMap()]});
 
 export const createDeleteGroupAction = group => {
-  const labels = store.getState().getIn(getModelPath('labels'), OrderedMap())
+  const labels_path = getModelPath('labels');
+  const labels = store.getState().getIn(labels_path, OrderedMap())
     .filter(d => d !== group);
 
   return createAction(
-    {setIn: [getModelPath('labels'), labels]}
+    {setIn: [labels_path, labels]}
   );
 }
 
