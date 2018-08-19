@@ -57,8 +57,6 @@ export const getDendrogram = createSelector(
     state => getCurrentData(state, CURRENT_MODEL_PATH).get('costs', [])
   ],
   (instances, parents, costs) => {
-    console.log(instances, parents, costs);
-
     parents = parents
       .map((d, i) => d === undefined ? i : d);
 
