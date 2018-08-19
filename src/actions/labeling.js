@@ -1,4 +1,4 @@
-import {Set, OrderedMap} from 'immutable';
+import {Map, OrderedMap} from 'immutable';
 
 import {createAction} from '.';
 import store from '../stores';
@@ -14,23 +14,29 @@ export const createRemoveLabelAction = k =>
   createAction({deleteIn: [getModelPath('labels', k)]});
 
 export const createCreateGroupAction = keys => {
+  if (!(keys instanceof Array)) {
+    keys = [keys];
+  }
+
   const labels_path = getModelPath('labels');
   const labels = store.getState().getIn(labels_path, OrderedMap());
 
-  const groups = Set(labels.valueSeq());
+  const groups = Map(labels.valueSeq().map(d => [d, true]))
+    .toJS();
 
-  const groupName = i => `Group ${i}`;
+  const createGroupName = () => {
+    let i = 0;
+    let name;
+    while ((name = `Group ${i}`) in groups) {
+      i++;
+    }
 
-  let i = 0;
-  while (groups.has(groupName(i))) {
-    i++;
+    groups[name] = true;
+    return name;
   }
 
-  const newGroupName = groupName(i);
-
-  const newLabels = OrderedMap(
-    (keys instanceof Array ? keys : [keys])
-      .map(k => [k, newGroupName])
+  const newLabels = Map(
+    keys.map(k => [k, createGroupName()])
   );
 
   return createAction({mergeIn: [labels_path, newLabels]});
