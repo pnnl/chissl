@@ -154,7 +154,7 @@ const InstanceRowComponent = ({data, group, histogram, onDragOver, onDrop}) =>
     <TableCell padding='checkbox'>
         <IconActionButtonContainer
           aria-label='Delete Selected'
-          action={createDeleteGroupAction(+group)}
+          action={createDeleteGroupAction(group)}
         >
           <CloseIcon />
         </IconActionButtonContainer>
