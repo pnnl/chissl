@@ -68,7 +68,7 @@ import {getNestedDataFromLabels, getPredictions, getDendrogram} from '../selecto
 import {
   createSetLabelAction,
   createDeleteGroupAction
-} from '../actions/ui';
+} from '../actions/labeling';
 
 const OffsetInstanceContainer = connect(
   (state, {group, offset, more=false}) => {

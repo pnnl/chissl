@@ -62,7 +62,11 @@ import {
   getCurrentData
 } from '../actions/api'
 
-import {createCreateGroupAction, createClearGroupAction, createRemoveLabelAction} from '../actions/ui';
+import {
+  createCreateGroupAction,
+  createClearGroupAction,
+  createRemoveLabelAction
+} from '../actions/labeling';
 
 import {SuggestionsContainer} from './InstanceTableContainer'
 

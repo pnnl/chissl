@@ -48,7 +48,9 @@ import {
   CURRENT_MODEL_PATH
 } from '../actions/api'
 
-import {createShowMoreAction, createCreateGroupAction} from '../actions/ui';
+import {createShowMoreAction} from '../actions/ui';
+
+import {createCreateGroupAction} from '../actions/labeling';
 
 export default connect(
   (state, {value, ...rest}) => {

@@ -62,7 +62,7 @@ import {getPredictions, getNestedDataFromLabels} from '../selectors';
 import {
   createSetLabelAction,
   createDeleteGroupAction,
-} from '../actions/ui';
+} from '../actions/labeling';
 
 import {
   CURRENT_MODEL_PATH,
