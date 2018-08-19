@@ -109,7 +109,7 @@ const allocatePredictionData = createSelector(
 export const getPredictions = createSelector(
   [ getDendrogram,
     allocatePredictionData,
-    state => state.getIn(['ui', 'labels'], OrderedMap())
+    state => getCurrentData(state, CURRENT_MODEL_PATH).get('labels', OrderedMap())
   ],
   (dendrogram, predictions, labels) => {
     const {lookup} = dendrogram;

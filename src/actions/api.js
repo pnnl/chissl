@@ -1,6 +1,8 @@
 import {isKeyed, fromJS, Map, OrderedMap} from 'immutable'
 import {get, post} from 'axios'
 
+import store from '../stores'
+
 import {createAction} from '.'
 
 export const DEFAULT_PATH = ['api', 'recent'];
@@ -35,6 +37,10 @@ export const getCurrentNames = (state, path=DEFAULT_PATH) => {
     model: data[3]
   };
 }
+
+export const getModelPath = (...args) =>
+  [...store.getState().getIn(CURRENT_MODEL_PATH, []), ...args]
+
 
 export const getCurrentData = (state, path=DEFAULT_PATH) =>
   state.getIn(state.getIn(path, []), Map())

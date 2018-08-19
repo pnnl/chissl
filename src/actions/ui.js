@@ -44,6 +44,10 @@ import {get, post} from 'axios';
 import {createAction} from '.';
 import store from '../stores';
 
+import {
+  getModelPath,
+} from './api.js'
+
 export const createOpenDatasetAction = () =>
   createAction({setIn: [['ui', 'datasetsOpenedByUser'], true]});
 
@@ -57,13 +61,13 @@ export const createOpenUnsortedAction = () =>
   createAction({setIn: [['ui', 'isUnsortedOpen'], true]});
 
 export const createSetLabelAction = (k, v) =>
-  createAction({setIn: [['ui', 'labels', k], v]});
+  createAction({setIn: [getModelPath('labels', k), v]});
 
 export const createRemoveLabelAction = k =>
-  createAction({deleteIn: [['ui', 'labels', k]]});
+  createAction({deleteIn: [getModelPath('labels', k)]});
 
 export const createCreateGroupAction = keys => {
-  const labels = store.getState().getIn(['ui', 'labels'], OrderedMap());
+  const labels = store.getState().getIn(getModelPath('labels'), OrderedMap());
 
   const n = labels.size ? labels.max() + 1 : 0;
 
@@ -72,18 +76,18 @@ export const createCreateGroupAction = keys => {
       .map((k,i) => labels.set(k, i + n))
   );
 
-  return createAction({setIn: [['ui', 'labels'], newLabels]});
+  return createAction({setIn: [getModelPath('labels'), newLabels]});
 }
 
 export const createClearGroupAction = () =>
-  createAction({setIn: [['ui', 'labels'], OrderedMap()]});
+  createAction({setIn: [getModelPath('labels'), OrderedMap()]});
 
 export const createDeleteGroupAction = group => {
-  const labels = store.getState().getIn(['ui', 'labels'])
+  const labels = store.getState().getIn(getModelPath('labels'), Map())
     .filter(d => d !== group);
 
   return createAction(
-    {setIn: [['ui', 'labels'], labels]}
+    {setIn: [getModelPath('labels'), labels]}
   );
 }
 
