@@ -155,17 +155,9 @@ export const SuggestionsContainer = connect(
 const InstanceRowComponent = ({data, group, histogram, onDragOver, onDrop}) =>
   <TableRow onDragOver={onDragOver} onDrop={onDrop}>
 
-    <TableCell padding='checkbox'>
-        <IconActionButtonContainer
-          aria-label='Delete Selected'
-          action={createDeleteGroupAction(group)}
-        >
-          <CloseIcon />
-        </IconActionButtonContainer>
-    </TableCell>
-
     <TableCell>
       <Toolbar disableGutters>
+
         <GroupColorButton
           style={{marginRight: 15}}
           group={group}
@@ -175,6 +167,14 @@ const InstanceRowComponent = ({data, group, histogram, onDragOver, onDrop}) =>
           style={{width: 150}}
           placeholder={`Group ${group}`}
         />
+
+        <IconActionButtonContainer
+          aria-label='Delete Selected'
+          action={createDeleteGroupAction(group)}
+        >
+          <CloseIcon />
+        </IconActionButtonContainer>
+
       </Toolbar>
 
       <LabeledContainer group={group} />
@@ -222,7 +222,6 @@ const InstanceTableContainer = ({data, histogram, ...rest}) =>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell padding='checkbox'/>
 
               <TableCell>
                 Examples
