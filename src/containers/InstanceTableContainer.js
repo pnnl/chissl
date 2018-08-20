@@ -156,34 +156,35 @@ const InstanceRowComponent = ({data, group, histogram, onDragOver, onDrop}) =>
   <TableRow onDragOver={onDragOver} onDrop={onDrop}>
 
     <TableCell>
-      <Toolbar disableGutters>
+      <div style={{width: 200}}>
+        <Toolbar disableGutters>
 
-        <GroupColorButton
-          style={{marginRight: 15}}
-          group={group}
-        />
-        <GroupName
-          value={group}
-          style={{width: 150}}
-          placeholder={`Group ${group}`}
-        />
+          <GroupColorButton
+            style={{marginRight: 15}}
+            group={group}
+          />
 
-        <IconActionButtonContainer
-          aria-label='Delete Selected'
-          action={createDeleteGroupAction(group)}
-        >
-          <CloseIcon />
-        </IconActionButtonContainer>
+          <GroupName
+            value={group}
+            style={{width: '100%'}}
+            placeholder={`Group ${group}`}
+          />
 
-      </Toolbar>
+          <IconActionButtonContainer
+            aria-label='Delete Selected'
+            action={createDeleteGroupAction(group)}
+          >
+            <CloseIcon />
+          </IconActionButtonContainer>
 
-      <LabeledContainer group={group} />
+        </Toolbar>
+
+        <GroupHexbin group={group} />
+      </div>
     </TableCell>
 
     <TableCell>
-      <div style={{width: 125}}>
-        <GroupHexbin group={group} />
-      </div>
+      <LabeledContainer group={group} />
     </TableCell>
 
     <TableCell>
@@ -230,10 +231,11 @@ const InstanceTableContainer = ({data, histogram, ...rest}) =>
             <TableRow>
 
               <TableCell>
-                Examples
               </TableCell>
 
-              <TableCell />
+              <TableCell>
+                Examples
+              </TableCell>
 
               <TableCell>
                 Borderlines
