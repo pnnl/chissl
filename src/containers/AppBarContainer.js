@@ -46,6 +46,7 @@ import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
+import FormGroup from '@material-ui/core/FormGroup'
 
 import MenuIcon from '@material-ui/icons/Menu';
 import SaveIcon from '@material-ui/icons/Save'
@@ -64,7 +65,8 @@ import ApplicationSelectDialog from './ApplicationSelectDialog'
 
 import IconActionButtonContainer from './IconActionButtonContainer';
 import DownloadContainer from './DownloadContainer';
-import InteractionStyleContainer from './InteractionStyleContainer';
+
+import {SimpleSwitch} from './SimpleContainers'
 
 const styles = theme => ({
   root: {
@@ -82,7 +84,10 @@ const styles = theme => ({
   }
 });
 
-const AppBarComponent = ({classes, title, isLoading, onClick, children}) =>
+export const INTERACTION_STYLE_PATH = ['ui', 'activeLearningStyle'];
+export const COMPACT_PATH = ['ui', 'compact'];
+
+const AppBarComponent = ({classes, title, isLoading, onClick}) =>
   <div className={classes.root}>
     <AppBar position='static'>
       <Toolbar>
@@ -109,11 +114,18 @@ const AppBarComponent = ({classes, title, isLoading, onClick, children}) =>
           <SaveIcon />
         </IconActionButtonContainer>
 
-        <InteractionStyleContainer />
-
         <div style={{flex: 1}}/>
 
-        { children }
+        <Toolbar>
+          <SimpleSwitch
+            label={<Typography style={{color: 'white'}}>Sequential</Typography>}
+            path={INTERACTION_STYLE_PATH}
+          />
+          <SimpleSwitch
+            label={<Typography style={{color: 'white'}}>Compact</Typography>}
+            path={COMPACT_PATH}
+          />
+        </Toolbar>
 
       </Toolbar>
     </AppBar>  

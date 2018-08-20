@@ -38,8 +38,14 @@
      
 */
 
+import React from 'react'
 import {connect} from 'react-redux';
 
+import { withStyles } from '@material-ui/core/styles'
+import green from '@material-ui/core/colors/green'
+import Typography from '@material-ui/core/Typography'
+import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Switch from '@material-ui/core/Switch'
 import TablePagination from '@material-ui/core/TablePagination';
 import TextField from '@material-ui/core/TextField';
 
@@ -52,6 +58,40 @@ const getPath = (path='', name) =>
 
 const mergeProps = (stateProps, dispatchProps, {path, ...ownProps}) =>
   ({...stateProps, ...dispatchProps, ...ownProps})
+
+const styles = {
+  bar: {},
+  checked: {
+    color: green[500],
+    '& + $bar': {
+      backgroundColor: green[500],
+    },
+  },
+};
+
+const SimpleSwitchComponent = ({path, checked, onChange, classes, ...props}) =>
+  <FormControlLabel
+    {...props}
+    control={
+      <Switch
+        classes={{
+          checked: classes.checked,
+          bar: classes.bar,
+        }}
+        checked={checked}
+        onChange={(event, checked) => onChange && onChange(checked)}
+      />
+    }
+  />
+
+export const SimpleSwitch = connect(
+  (state, {path}) => ({
+    checked: state.getIn(path)
+  }),
+  (dispatch, {path}) => ({
+    onChange: checked => dispatch(createAction({setIn: [path, checked]}))
+  })
+)(withStyles(styles)(SimpleSwitchComponent))  
 
 export const PaginationContainer = connect(
   (state, {path, ...rest}) => ({
