@@ -73,7 +73,7 @@ import {
   getCurrentData
 } from '../actions/api'
 
-
+import GroupHexbin from './GroupHexbin'
 import InstanceContainer from './InstanceContainer';
 import IconActionButtonContainer from './IconActionButtonContainer';
 import GroupHistogramContainer, {GroupHistogramSelect} from './GroupHistogramContainer';
@@ -181,6 +181,12 @@ const InstanceRowComponent = ({data, group, histogram, onDragOver, onDrop}) =>
     </TableCell>
 
     <TableCell>
+      <div style={{width: 125}}>
+        <GroupHexbin group={group} />
+      </div>
+    </TableCell>
+
+    <TableCell>
       <BorderlinesContainer group={group} />
     </TableCell>
     
@@ -226,6 +232,8 @@ const InstanceTableContainer = ({data, histogram, ...rest}) =>
               <TableCell>
                 Examples
               </TableCell>
+
+              <TableCell />
 
               <TableCell>
                 Borderlines
