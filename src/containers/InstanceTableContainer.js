@@ -46,12 +46,6 @@ import {Map, OrderedMap} from 'immutable';
 
 import {mean, deviation, merge} from 'd3-array';
 
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-
 import Toolbar from '@material-ui/core/Toolbar'
 
 import Grid from '@material-ui/core/Grid'
