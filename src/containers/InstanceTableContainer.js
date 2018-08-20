@@ -54,6 +54,7 @@ import TableRow from '@material-ui/core/TableRow';
 
 import Toolbar from '@material-ui/core/Toolbar'
 
+import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent'
 
@@ -153,58 +154,59 @@ export const SuggestionsContainer = connect(
 )(InstanceContainer)
 
 const InstanceRowComponent = ({data, group, histogram, onDragOver, onDrop}) =>
-  <TableRow onDragOver={onDragOver} onDrop={onDrop}>
+  <Grid
+    container padding={16}
+    onDragOver={onDragOver} onDrop={onDrop}
+  >
 
-    <TableCell>
-      <div style={{width: 200}}>
-        <Toolbar disableGutters>
+    <Grid item xs={12} sm={2}>
+      <Toolbar disableGutters>
 
-          <GroupColorButton
-            style={{marginRight: 15}}
-            group={group}
-          />
+        <GroupColorButton
+          style={{marginRight: 15}}
+          group={group}
+        />
 
-          <GroupName
-            value={group}
-            style={{width: '100%'}}
-            placeholder={`Group ${group}`}
-          />
+        <GroupName
+          value={group}
+          style={{width: '100%'}}
+          placeholder={`Group ${group}`}
+        />
 
-          <IconActionButtonContainer
-            aria-label='Delete Selected'
-            action={createDeleteGroupAction(group)}
-          >
-            <CloseIcon />
-          </IconActionButtonContainer>
+        <IconActionButtonContainer
+          aria-label='Delete Selected'
+          action={createDeleteGroupAction(group)}
+        >
+          <CloseIcon />
+        </IconActionButtonContainer>
 
-        </Toolbar>
+      </Toolbar>
 
-        <GroupHexbin group={group} />
-      </div>
-    </TableCell>
+      <GroupHexbin group={group} />
+    </Grid>
 
-    <TableCell>
+    <Grid item xs={12} sm={2}>
       <LabeledContainer group={group} />
-    </TableCell>
+    </Grid>
 
-    <TableCell>
-      <BorderlinesContainer group={group} />
-    </TableCell>
-    
-    <TableCell>
+    <Grid item xs={12} sm={histogram ? 4 : 6}>
       { [...data.get(group).keys()].map(key =>
           <SuggestionsContainer group={group} subGroup={key} key={key} />
         )
       }
-    </TableCell>
+    </Grid>
 
+    <Grid item xs={12} sm={2}>
+      <BorderlinesContainer group={group} />
+    </Grid>
+    
     { histogram &&
-      <TableCell>
+      <Grid item xs={12} sm={2}>
         <GroupHistogramContainer group={group} />
-      </TableCell>
+      </Grid>
     }
 
-  </TableRow>
+  </Grid>
 
 const preventDefault = ev => ev.preventDefault();
 
@@ -226,44 +228,38 @@ const InstanceTableContainer = ({data, histogram, ...rest}) =>
     ? <div/>
     : <Card className='instance-table'>
       <CardContent>
-        <Table>
-          <TableHead>
-            <TableRow>
+        <Grid container padding={16}>
 
-              <TableCell>
-              </TableCell>
+          <Grid item xs={12} sm={2}>
+          </Grid>
 
-              <TableCell>
-                Examples
-              </TableCell>
+          <Grid item xs={12} sm={2}>
+            Examples
+          </Grid>
 
-              <TableCell>
-                Borderlines
-              </TableCell>
+          <Grid item xs={12} sm={histogram ? 4 : 6}>
+            Suggestions
+          </Grid>
 
-              <TableCell>
-                Suggestions
-              </TableCell>
+          <Grid item xs={12} sm={2}>
+            Borderlines
+          </Grid>
 
-              { histogram &&
-                <TableCell>
-                  <div style={{width: 350}}>
-                    <GroupHistogramSelect />
-                  </div>
-                </TableCell>
-              }
+          { histogram &&
+            <Grid item xs={12} sm={2}>
+              <GroupHistogramSelect />
+            </Grid>
+          }
 
-            </TableRow>
-          </TableHead>
+        </Grid>
 
-          <TableBody>
-            { [...data.keys()].map(key =>
-                key !== '-1' &&
-                <InstanceRowContainer key={key} group={key} histogram={histogram} />
-              )
-            }
-          </TableBody>
-        </Table>
+        <div>
+          { [...data.keys()].map(key =>
+              key !== '-1' &&
+              <InstanceRowContainer key={key} group={key} histogram={histogram} />
+            )
+          }
+        </div>
       </CardContent>
     </Card>
 
