@@ -51,6 +51,7 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Grid from '@material-ui/core/Grid'
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent'
+import Collapse from '@material-ui/core/Collapse'
 
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -178,9 +179,9 @@ const InstanceRowComponent = ({data, compact, group, histogram, onDragOver, onDr
 
       </Toolbar>
 
-      { compact &&
+      <Collapse in={compact}>
         <GroupHexbin group={group} />
-      }
+      </Collapse>
     
     </Grid>
 
