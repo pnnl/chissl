@@ -34,8 +34,14 @@ export const prepareDataForScatter = createSelector(
 )
 
 const GroupHexbin = ({data=[], group, color}) => {
-  const getColor = d =>
-    sum(d, d => d.group === group) > 0 ? color : 'none';
+  const getColor = d =>({
+    fill: sum(d, d => d.group === group) > 0 ? color : 'none'
+  });
+
+  const getBorder = d =>
+    sum(d, d => d.group === group && d.groupBefore !== group) > 0
+      ? {strokeWidth: 3, stroke: 'black'}
+      : null;
 
   return <ContainerDimensions>
     { ({ width }) =>
@@ -51,7 +57,8 @@ const GroupHexbin = ({data=[], group, color}) => {
             radius={10}
             style={{stroke: 'darkgray', strokeWidth: 1}}
             eachPath={d => ({
-              style: {fill: getColor(d)}
+              style: {...getColor(d),
+                      ...getBorder(d)}
             })}
           />
         </Chart>
