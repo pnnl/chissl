@@ -48,13 +48,15 @@ export const ScatterPlot = ({data, x, y, xScale, yScale, r, size=10}) => {
   </g>
 }
 
-export const HexbinPlot = ({data, x, y, xScale, yScale, radius, eachPath, ...props}) => {
+export const HexbinPlot = ({data, x, y, xScale, yScale, density=0.05, eachPath, ...props}) => {
   const [xmin, xmax] = xScale.range();
   const [ymin, ymax] = yScale.range();
+  const width = xmax - xmin;
+  const height = ymax - ymin;
 
   const bins = hexbin()
-    .radius(radius)
-    .extent([[xmin, ymin], [xmax - xmin, ymax - ymin]])
+    .radius(density*Math.min(width, height))
+    .extent([[xmin, ymin], [width, height]])
     .x((d, i) => xScale(x(d, i)))
     .y((d, i) => yScale(y(d, i)));
 
