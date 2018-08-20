@@ -68,6 +68,8 @@ import {
   getCurrentData
 } from '../actions/api'
 
+import {COMPACT_PATH} from './AppBarContainer'
+
 import GroupHexbin from './GroupHexbin'
 import InstanceContainer from './InstanceContainer';
 import IconActionButtonContainer from './IconActionButtonContainer';
@@ -147,7 +149,7 @@ export const SuggestionsContainer = connect(
   stateProps => stateProps
 )(InstanceContainer)
 
-const InstanceRowComponent = ({data, group, histogram, onDragOver, onDrop}) =>
+const InstanceRowComponent = ({data, compact, group, histogram, onDragOver, onDrop}) =>
   <Grid
     container padding={16}
     onDragOver={onDragOver} onDrop={onDrop}
@@ -176,7 +178,10 @@ const InstanceRowComponent = ({data, group, histogram, onDragOver, onDrop}) =>
 
       </Toolbar>
 
-      <GroupHexbin group={group} />
+      { compact &&
+        <GroupHexbin group={group} />
+      }
+    
     </Grid>
 
     <Grid item xs={12} sm={2}>
@@ -207,6 +212,7 @@ const preventDefault = ev => ev.preventDefault();
 const InstanceRowContainer = connect(
   state => ({
     onDragOver: preventDefault,
+    compact: state.getIn(COMPACT_PATH),
     data: getNestedDataFromLabels(state),
   }),
   (dispatch, {group}) => ({

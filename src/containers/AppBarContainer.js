@@ -122,7 +122,7 @@ const AppBarComponent = ({classes, title, isLoading, onClick}) =>
             path={INTERACTION_STYLE_PATH}
           />
           <SimpleSwitch
-            label={<Typography style={{color: 'white'}}>Compact</Typography>}
+            label={<Typography style={{color: 'white'}}>Mini Maps</Typography>}
             path={COMPACT_PATH}
           />
         </Toolbar>
