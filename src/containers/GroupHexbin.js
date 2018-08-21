@@ -33,6 +33,22 @@ export const prepareDataForScatter = createSelector(
     }))
 )
 
+const HexbinBase = ({data=[], ...props}) =>
+  <ContainerDimensions>
+    { ({ width }) =>
+        <Chart
+          width={width}
+          height={width}
+          margin={20}
+          data={data}
+          x='x'
+          y='y'
+        >
+          <HexbinPlot {...props} />
+        </Chart>
+    }
+  </ContainerDimensions>
+
 const GroupHexbin = ({data=[], group, color}) => {
   const getColor = d =>({
     fill: sum(d, d => d.group === group) > 0 ? color : 'none'
@@ -43,27 +59,16 @@ const GroupHexbin = ({data=[], group, color}) => {
       ? {strokeWidth: 3, stroke: 'black'}
       : null;
 
-  return <ContainerDimensions>
-    { ({ width }) =>
-        <Chart
-          width={width}
-          height={width}
-          margin={20}
-          data={data}
-          x='x'
-          y='y'
-        >
-          <HexbinPlot
-            radius={10}
-            style={{stroke: 'darkgray', strokeWidth: 1}}
-            eachPath={d => ({
-              style: {...getColor(d),
-                      ...getBorder(d)}
-            })}
-          />
-        </Chart>
-    }
-  </ContainerDimensions>
+  return <HexbinBase
+    data={data}
+    style={{stroke: 'darkgray', strokeWidth: 1}}
+    eachPath={d => ({
+      style: {
+        ...getBorder(d),
+        ...getColor(d)
+      }
+    })}
+  />
 }
 
 export default connect(
