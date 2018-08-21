@@ -57,7 +57,7 @@ import {createHideMoreAction, createSetPageAction} from '../actions/ui.js';
 const MoreDrawerComponent = ({values, page, itemsPerPage, onClose, onRequestMore, ...rest}) =>
   <Drawer
     open={values && values.length > 0}
-    type='persistent'
+    variant='persistent'
     anchor='right'
     {...rest}
   >
