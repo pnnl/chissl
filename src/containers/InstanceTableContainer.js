@@ -159,10 +159,12 @@ const InstanceRowComponent = ({data, compact, group, histogram, onDragOver, onDr
     <Grid item xs={12} sm={2}>
       <Toolbar disableGutters>
 
-        <GroupColorButton
-          style={{marginRight: 15}}
-          group={group}
-        />
+        <IconActionButtonContainer
+          aria-label='Delete Selected'
+          action={createDeleteGroupAction(group)}
+        >
+          <CloseIcon />
+        </IconActionButtonContainer>
 
         <GroupName
           value={group}
@@ -170,12 +172,10 @@ const InstanceRowComponent = ({data, compact, group, histogram, onDragOver, onDr
           placeholder={`Group ${group}`}
         />
 
-        <IconActionButtonContainer
-          aria-label='Delete Selected'
-          action={createDeleteGroupAction(group)}
-        >
-          <CloseIcon />
-        </IconActionButtonContainer>
+        <GroupColorButton
+          style={{marginLeft: 15}}
+          group={group}
+        />
 
       </Toolbar>
 
