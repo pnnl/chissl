@@ -87,16 +87,12 @@ const styles = theme => ({
 export const INTERACTION_STYLE_PATH = ['ui', 'activeLearningStyle'];
 export const COMPACT_PATH = ['ui', 'compact'];
 
-const AppBarComponent = ({classes, title, isLoading, onClick}) =>
+const AppBarComponent = ({classes, onClick}) =>
   <div className={classes.root}>
     <AppBar position='static'>
       <Toolbar>
 
         <ApplicationSelectDialog />
-
-        <Typography type='title' color='inherit'>
-          {title}
-        </Typography>
 
         <DownloadContainer />
 
@@ -132,10 +128,7 @@ const AppBarComponent = ({classes, title, isLoading, onClick}) =>
   </div>
 
 export default connect(
-  state => ({
-    title: `${state.getIn(['ui', 'currentDataset'], '')} / ${state.getIn(['ui', 'currentModel'], '')}`,
-    isLoading: state.hasIn(['ui', 'currentDataset']) && !state.has('data')
-  }),
+  null,
   dispatch => bindActionCreators({
     onClick: createOpenDatasetAction,
   }, dispatch)
