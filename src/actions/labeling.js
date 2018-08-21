@@ -74,9 +74,16 @@ export const createRenameGroupAction = (oldName, newName) => {
 
   const state = store.getState();
   const labels_path = getModelPath('labels')
+
   const labels = state.getIn(labels_path, OrderedMap())
     .map(v => v === oldName ? newName : v);
 
-  return createAction({setIn: [labels_path, labels]});
+  const color = state.getIn([...GROUP_COLOR_PATH, oldName]);
+
+  return createAction(
+    {setIn: [labels_path, labels]},
+    {deleteIn: [[...GROUP_COLOR_PATH, oldName]]},
+    {setIn: [[...GROUP_COLOR_PATH, newName], color]},
+  );
 }
 
