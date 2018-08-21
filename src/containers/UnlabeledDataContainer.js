@@ -92,56 +92,56 @@ const styles = theme => ({
 });
 
 const UnlabeledDataComponent = ({data, instances, labels, onRemoveLabel, onAddLabels, classes}) => {
-  const values = data.get('-1');
+  const values = data.get(-1);
 
-  return (
-    <div
-      onDragOver={ev => ev.preventDefault()}
-      onDrop={ev => onRemoveLabel && onRemoveLabel(JSON.parse(ev.dataTransfer.getData('text')))}
-    >
-      <ExpandableCard
-        title='Unlabeled Items'
-        subheader='Double click an item to create a new group. Drag an item to change its group.'
-        avatar={
-          values
-            ? formatAvatar(sum([...values.values()], d => d.length))
-            : '0'
-        }
-        actions={
-          <div>
-            <Button
-              className={classes.button}
-              disabled={!values}
-              variant="contained"
-              color="primary"
-              onClick={() => onAddLabels(values ? [...values.values()].map(d => instances[d[0]]) : [])}
-            >
-              Add all
-              <AddCircleIcon className={classes.rightIcon} />
-            </Button> 
-          </div>
-        }
+  return instances.length > 0
+    ? <div
+        onDragOver={ev => ev.preventDefault()}
+        onDrop={ev => onRemoveLabel && onRemoveLabel(JSON.parse(ev.dataTransfer.getData('text')))}
       >
-        <Grid container>
-          <Grid item xs={12} sm={2} padding={16}>
-            <OverviewHexbin />
-          </Grid>
+        <ExpandableCard
+          title='Unlabeled Items'
+          subheader='Double click an item to create a new group. Drag an item to change its group.'
+          avatar={
+            values
+              ? formatAvatar(sum([...values.values()], d => d.length))
+              : '0'
+          }
+          actions={
+            <div>
+              <Button
+                className={classes.button}
+                disabled={!values}
+                variant="contained"
+                color="primary"
+                onClick={() => onAddLabels(values ? [...values.values()].map(d => instances[d[0]]) : [])}
+              >
+                Add all
+                <AddCircleIcon className={classes.rightIcon} />
+              </Button> 
+            </div>
+          }
+        >
+          <Grid container>
+            <Grid item xs={12} sm={2} padding={16}>
+              <OverviewHexbin />
+            </Grid>
 
-          <Grid item xs={12} sm={10}>
-            { values
-                ? [...values.keys()].map(key =>
-                    <SuggestionsContainer group={-1} subGroup={+key} key={key}/>
-                  )
-                : <Typography type='caption' align='center' gutterBottom={true}>
-                    There are no unlabeled instances. Drag instances here to un-label them.
-                  </Typography>
-            }
-          </Grid>
+            <Grid item xs={12} sm={10}>
+              { values
+                  ? [...values.keys()].map(key =>
+                      <SuggestionsContainer group={-1} subGroup={+key} key={key}/>
+                    )
+                  : <Typography type='caption' align='center' gutterBottom={true}>
+                      There are no unlabeled instances. Drag instances here to un-label them.
+                    </Typography>
+              }
+            </Grid>
 
-        </Grid>
-      </ExpandableCard>
-    </div>
-  );
+          </Grid>
+        </ExpandableCard>
+      </div>
+    : <div />
 }
 
 export default connect(
