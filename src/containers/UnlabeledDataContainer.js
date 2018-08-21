@@ -56,7 +56,7 @@ import RemoveCircleIcon from '@material-ui/icons/RemoveCircle';
 
 import ExpandableCard from '../components/ExpandableCard';
 
-import GroupHexbin from './GroupHexbin'
+import {OverviewHexbin} from './GroupHexbin'
 
 import {getNestedDataFromLabels} from '../selectors';
 
@@ -124,7 +124,7 @@ const UnlabeledDataComponent = ({data, instances, labels, onRemoveLabel, onAddLa
       >
         <Grid container>
           <Grid item xs={12} sm={2} padding={16}>
-            <GroupHexbin group={-1} />
+            <OverviewHexbin />
           </Grid>
 
           <Grid item xs={12} sm={10}>
