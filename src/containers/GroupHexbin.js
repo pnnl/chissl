@@ -12,7 +12,7 @@ import {nest} from 'd3-collection'
 import {scan, sum} from 'd3-array'
 
 import {scaleSequential} from 'd3-scale'
-import {interpolateBrBG} from 'd3-scale-chromatic'
+import {interpolatePRGn as interpolateDivergent} from 'd3-scale-chromatic'
 
 import {
   getModelPath
@@ -41,7 +41,7 @@ export const prepareDataForScatter = createSelector(
 
     const delta = sum(data, ({groupBefore, group}) => groupBefore != group);
 
-    const colorScale = scaleSequential(interpolateBrBG)
+    const colorScale = scaleSequential(interpolateDivergent)
       .domain([-delta, delta]);
 
     return {data, colorScale};
