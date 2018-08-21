@@ -12,7 +12,10 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 
 import SimpleDialog from '../components/SimpleDialog'
 
-import {createListApplicationsAction} from '../actions/api'
+import {
+  CURRENT_MODEL_PATH,
+  createListApplicationsAction
+} from '../actions/api'
 
 import ApplicationList from './ApplicationList'
 import TransductionModelList from './TransductionModelList'
@@ -46,7 +49,7 @@ const ModelPicker = ({dispatch, ...props}) =>
 
 export default connect(
   state => ({
-    open: state.getIn(OPEN_APPLICATIONS_PATH)
+    open: state.getIn(OPEN_APPLICATIONS_PATH) || !state.hasIn(CURRENT_MODEL_PATH)
   }),
   dispatch => bindActionCreators({
     onClose: createOpenApplicationsAction
