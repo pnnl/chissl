@@ -189,6 +189,10 @@ const InstanceRowComponent = ({data, compact, group, histogram, onDragOver, onDr
       <LabeledContainer group={group} />
     </Grid>
 
+    <Grid item xs={12} sm={2}>
+      <BorderlinesContainer group={group} />
+    </Grid>
+    
     <Grid item xs={12} sm={histogram ? 4 : 6}>
       { [...data.get(group).keys()].map(key =>
           <SuggestionsContainer group={group} subGroup={key} key={key} />
@@ -196,10 +200,6 @@ const InstanceRowComponent = ({data, compact, group, histogram, onDragOver, onDr
       }
     </Grid>
 
-    <Grid item xs={12} sm={2}>
-      <BorderlinesContainer group={group} />
-    </Grid>
-    
     { histogram &&
       <Grid item xs={12} sm={2}>
         <GroupHistogramContainer group={group} />
@@ -238,12 +238,12 @@ const InstanceTableContainer = ({data, histogram, ...rest}) =>
             Examples
           </Grid>
 
-          <Grid item xs={12} sm={histogram ? 4 : 6}>
-            Suggestions
-          </Grid>
-
           <Grid item xs={12} sm={2}>
             Borderlines
+          </Grid>
+
+          <Grid item xs={12} sm={histogram ? 4 : 6}>
+            Suggestions
           </Grid>
 
           { histogram &&

@@ -123,7 +123,11 @@ const UnlabeledDataComponent = ({data, instances, labels, onRemoveLabel, onAddLa
         }
       >
         <Grid container>
-          <Grid item xs={12} sm={9}>
+          <Grid item xs={12} sm={2} padding={16}>
+            <GroupHexbin group={-1} />
+          </Grid>
+
+          <Grid item xs={12} sm={10}>
             { values
                 ? [...values.keys()].map(key =>
                     <SuggestionsContainer group={-1} subGroup={+key} key={key}/>
@@ -132,11 +136,8 @@ const UnlabeledDataComponent = ({data, instances, labels, onRemoveLabel, onAddLa
                     There are no unlabeled instances. Drag instances here to un-label them.
                   </Typography>
             }
-        </Grid>
-
-          <Grid item xs={12} sm={3}>
-            <GroupHexbin group={-1} />
           </Grid>
+
         </Grid>
       </ExpandableCard>
     </div>
