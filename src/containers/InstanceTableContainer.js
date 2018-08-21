@@ -71,7 +71,7 @@ import {
 
 import {COMPACT_PATH} from './AppBarContainer'
 
-import GroupHexbin from './GroupHexbin'
+import {GroupHexbin} from './GroupHexbin'
 import InstanceContainer from './InstanceContainer';
 import IconActionButtonContainer from './IconActionButtonContainer';
 import GroupHistogramContainer, {GroupHistogramSelect} from './GroupHistogramContainer';
