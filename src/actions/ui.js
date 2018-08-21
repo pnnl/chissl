@@ -85,3 +85,8 @@ export const GROUP_COLOR_PATH = ['ui', 'groupColors'];
 
 export const createSetGroupColorAction = (group, color) =>
   createAction({setIn: [[...GROUP_COLOR_PATH, group], color]})
+
+export const OPEN_APPLICATIONS_PATH = ['ui', 'openApplications'];
+
+export const createOpenApplicationsAction = value =>
+  createAction({setIn: [OPEN_APPLICATIONS_PATH, value]})

@@ -47,7 +47,10 @@ import {createInitAction} from './actions/ui';
 
 import { withStyles } from '@material-ui/core/styles';
 
+import {createListApplicationsAction} from './actions/api'
+
 import AppBarContainer from './containers/AppBarContainer';
+import ApplicationSelectDialog from './containers/ApplicationSelectDialog'
 import SelectDatasetContainer from './containers/SelectDatasetContainer';
 import InstanceTableContainer from './containers/InstanceTableContainer';
 import UnlabeledDataContainer from './containers/UnlabeledDataContainer';
@@ -61,11 +64,17 @@ const styles = theme => ({
 });        
 
 class App extends Component {
+  componentDidMount() {
+    this.props.dispatch(createListApplicationsAction());
+  }
+
   render() {
     const {sequential} = this.props;
     return (
       <div className='App'>
         <AppBarContainer/>
+
+        <ApplicationSelectDialog />
 
         <MoreDrawerContainer/>
 
@@ -85,5 +94,5 @@ export default connect(
   state => ({
     sequential: state.getIn(['ui', 'activeLearningStyle']),
     tags: state.getIn(['datasets', state.getIn(['ui', 'currentDataset']), 'tags'], List()),
-  }),
+  })
 )(withStyles(styles)(App));

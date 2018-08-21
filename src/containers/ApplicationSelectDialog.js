@@ -18,33 +18,37 @@ import ApplicationList from './ApplicationList'
 import TransductionModelList from './TransductionModelList'
 import NewModelList from './NewModelList'
 
-class ModelPicker extends React.Component {
-  render() {
-    return   <SimpleDialog
-      submit='Create'
-      fullWidth
-      maxWidth='md'
-      title='Transduction Models'
-      {...this.props}
-    >
-      <Grid container spacing={16}>
-        <Grid item xs={12} sm={4}>
-            <ApplicationList />
-        </Grid>
+import {
+  OPEN_APPLICATIONS_PATH,
+  createOpenApplicationsAction,
+} from '../actions/ui'
 
-        <Grid item xs={12} sm={8}>
-          <TransductionModelList />
-          <NewModelList />
-        </Grid>
+
+const ModelPicker = ({dispatch, ...props}) =>
+  <SimpleDialog
+    fullWidth
+    maxWidth='md'
+    title='Transduction Models'
+    {...props}
+  >
+    <Grid container spacing={16}>
+      <Grid item xs={12} sm={4}>
+        <ApplicationList />
       </Grid>
 
-    </SimpleDialog>
-  }
-} 
+      <Grid item xs={12} sm={8}>
+        <TransductionModelList />
+        <NewModelList />
+      </Grid>
+    </Grid>
+
+  </SimpleDialog>
 
 export default connect(
-  null,
+  state => ({
+    open: state.getIn(OPEN_APPLICATIONS_PATH)
+  }),
   dispatch => bindActionCreators({
-    onClick: createListApplicationsAction
+    onClose: createOpenApplicationsAction
   }, dispatch)
 )(ModelPicker)

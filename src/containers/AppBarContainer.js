@@ -51,17 +51,17 @@ import FormGroup from '@material-ui/core/FormGroup'
 import MenuIcon from '@material-ui/icons/Menu';
 import SaveIcon from '@material-ui/icons/Save'
 import ImportExportIcon from '@material-ui/icons/ImportExport'
+import FolderIcon from '@material-ui/icons/Folder'
 
 import {
-    createOpenDatasetAction
+  createOpenApplicationsAction,
+  createOpenDatasetAction
 } from '../actions/ui'
 
 import {
   createUpdateDatasetAction,
   createDeployModelAction
 } from '../actions/api'
-
-import ApplicationSelectDialog from './ApplicationSelectDialog'
 
 import IconActionButtonContainer from './IconActionButtonContainer';
 import DownloadContainer from './DownloadContainer';
@@ -91,8 +91,12 @@ const AppBarComponent = ({classes, onClick}) =>
   <div className={classes.root}>
     <AppBar position='static'>
       <Toolbar>
-
-        <ApplicationSelectDialog />
+        <IconActionButtonContainer
+          color='inherit'
+          action={createOpenApplicationsAction(true)}
+        >
+          <FolderIcon />
+        </IconActionButtonContainer>
 
         <DownloadContainer />
 
@@ -131,5 +135,6 @@ export default connect(
   null,
   dispatch => bindActionCreators({
     onClick: createOpenDatasetAction,
+    onClose: createOpenApplicationsAction
   }, dispatch)
 )(withStyles(styles)(AppBarComponent));
