@@ -70,8 +70,6 @@ export const createDeleteGroupAction = group => {
 }
 
 export const createRenameGroupAction = (oldName, newName) => {
-  console.log(oldName, '->', newName);
-
   const state = store.getState();
   const labels_path = getModelPath('labels')
 
