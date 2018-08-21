@@ -5,6 +5,10 @@ import store from '../stores'
 
 import {createAction} from '.'
 
+import {
+  createOpenApplicationsAction,
+} from '../actions/ui'
+
 export const DEFAULT_PATH = ['api', 'recent'];
 export const CURRENT_MODEL_PATH = ['api', 'currentModel'];
 
@@ -46,11 +50,14 @@ export const getCurrentData = (state, path=DEFAULT_PATH) =>
   state.getIn(state.getIn(path, []), Map())
 
 export const createSetDatasetAction = (application, model) =>
-  createMergeURLAction(
-    get(`/api/applications/${application}/transduction/${model}`),
-    CURRENT_MODEL_PATH
-  )
+  (dispatch, getState) => {
+    dispatch(createOpenApplicationsAction());
 
+    createMergeURLAction(
+      get(`/api/applications/${application}/transduction/${model}`),
+      CURRENT_MODEL_PATH
+    )(dispatch, getState);
+}
 export const createUpdateDatasetAction = () => (dispatch, getState) => {
   const state = getState();
   const {application, model} = getCurrentNames(state, CURRENT_MODEL_PATH);
