@@ -1,4 +1,5 @@
 import React from 'react'
+import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import {createSelector} from 'reselect'
 import {Map} from 'immutable'
@@ -15,7 +16,8 @@ import {
 } from '../actions/api'
 
 import {
-  GROUP_COLOR_PATH
+  GROUP_COLOR_PATH,
+  createShowMoreAction
 } from '../actions/ui'
 
 import Chart, {HexbinPlot, ScatterPlot} from '../charts'
@@ -51,7 +53,6 @@ const HexbinBase = ({data=[], ...props}) =>
     }
   </ContainerDimensions>
 
-
 const getBinSummary = data => {
   const counts = nest()
     .key(d => d.group)
@@ -64,11 +65,12 @@ const getBinSummary = data => {
   return {key, value: value/total};
 }
 
-const OverviewHexbinComponent = ({data=[], colors=Map()}) => {
+const OverviewHexbinComponent = ({data=[], colors=Map(), onClick}) => {
   const getStyles = d => {
     const {key, value} = getBinSummary(d);
 
     return {
+      onClick: () => onClick(d.map(({_id}) => _id)),
       style: {
         fill: colors.get(key, 'none'),
         fillOpacity: value
@@ -87,7 +89,10 @@ export const OverviewHexbin = connect(
   (state, {group}) => ({
     data: prepareDataForScatter(state),
     colors: state.getIn(GROUP_COLOR_PATH)
-  })
+  }),
+  dispatch => bindActionCreators({
+    onClick: createShowMoreAction
+  }, dispatch)
 )(OverviewHexbinComponent)
 
 const GroupHexbinComponent = ({data=[], group, color}) => {
