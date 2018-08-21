@@ -224,8 +224,15 @@ const InstanceRowContainer = connect(
   })
 )(InstanceRowComponent);
 
-const InstanceTableContainer = ({data, histogram, ...rest}) =>
-  data.size() === 0 || (data.size() === 1 && data.has('-1'))
+const InstanceTableContainer = ({data, labels=OrderedMap(), histogram, ...rest}) => {
+  const visited = {}
+  const groups = labels.filter(d =>
+    d in visited
+      ? false
+      : visited[d] = true
+  );
+
+  return labels.size === 0
     ? <div/>
     : <Card className='instance-table'>
       <CardContent>
@@ -255,20 +262,31 @@ const InstanceTableContainer = ({data, histogram, ...rest}) =>
         </Grid>
 
         <div>
-          { [...data.keys()].map(key =>
-              key !== '-1' &&
-              <InstanceRowContainer key={key} group={key} histogram={histogram} />
-            )
+          { groups
+              .valueSeq()
+              .toArray()
+              .map((group, i) =>
+                <InstanceRowContainer
+                  key={i}
+                  group={group}
+                  histogram={histogram}
+                />
+              )
           }
         </div>
       </CardContent>
     </Card>
-
+}
 export default connect(
-  state => ({
-    data: getNestedDataFromLabels(state),
-    histogram: getCurrentData(state, CURRENT_MODEL_PATH).get('histogram', Map()).size > 0
-  }),
+  state => {
+    const data = getCurrentData(state, CURRENT_MODEL_PATH);
+
+    return {
+      data: getNestedDataFromLabels(state),
+      labels: data.get('labels'),
+      histogram: data.get('histogram', Map()).size > 0
+    }
+  },
   dispatch => bindActionCreators({
   }, dispatch)
 )(InstanceTableContainer);
