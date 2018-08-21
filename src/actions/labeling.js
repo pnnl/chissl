@@ -1,5 +1,7 @@
 import {Map, OrderedMap} from 'immutable';
 
+import {scaleOrdinal, schemeCategory10} from 'd3-scale'
+
 import {createAction} from '.';
 import store from '../stores';
 
@@ -7,11 +9,15 @@ import {
   getModelPath,
 } from './api.js'
 
+import {GROUP_COLOR_PATH} from './ui'
+
 export const createSetLabelAction = (k, v) =>
   createAction({setIn: [getModelPath('labels', k), v]});
 
 export const createRemoveLabelAction = k =>
   createAction({deleteIn: [getModelPath('labels', k)]});
+
+const defaultColors = scaleOrdinal(schemeCategory10);
 
 export const createCreateGroupAction = keys => {
   if (!(keys instanceof Array)) {
@@ -39,7 +45,15 @@ export const createCreateGroupAction = keys => {
     keys.map(k => [k, createGroupName()])
   );
 
-  return createAction({mergeIn: [labels_path, newLabels]});
+  const newColors = Map(
+    newLabels.valueSeq()
+      .map(d => [d, defaultColors(d)])
+  );
+
+  return createAction(
+    {mergeIn: [labels_path, newLabels]},
+    {mergeIn: [GROUP_COLOR_PATH, newColors]}
+  );
 }
 
 export const createClearGroupAction = () =>
