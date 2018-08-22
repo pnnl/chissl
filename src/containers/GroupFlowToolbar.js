@@ -29,7 +29,7 @@ export const GroupFlowToolbar = ({group, direction, flow, colors=Map(), onClick}
         { (flow || new Map())
             .entries()
             .map(({key, value}) =>
-              <Tooltip title={`${direction} ${key}`}>
+              <Tooltip title={`${direction} ${key === '-1' ? 'unlabeled' : key}`}>
                 <Button
                   size='small'
                   variant={key === '-1' ? 'outlined' : 'contained'}
