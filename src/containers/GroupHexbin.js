@@ -25,6 +25,13 @@ import {
 
 import Chart, {HexbinPlot, ScatterPlot} from '../charts'
 
+const getTotalFlow = (data=[], source, target) =>
+    nest()
+      .key(d => d[source])
+      .key(d => d[target])
+      .rollup(leaves => leaves.length)
+      .map(data)
+
 export const prepareDataForScatter = createSelector(
   [ getDendrogram,
     getPredictions,
@@ -44,7 +51,12 @@ export const prepareDataForScatter = createSelector(
     const colorScale = scaleSequential(interpolateDivergent)
       .domain([-delta, delta]);
 
-    return {data, colorScale};
+    const flow = {
+      in: getTotalFlow(data, 'group', 'groupBefore'),
+      out: getTotalFlow(data, 'group', 'groupBefore')
+    };
+
+    return {data, colorScale, flow};
   }
 )
 
@@ -128,8 +140,6 @@ const GroupHexbinComponent = ({data=[], group, colorScale}) => {
       }
     };
   }
-
-  console.log('GroupHexbin', data)
 
   return <HexbinBase
     data={data}

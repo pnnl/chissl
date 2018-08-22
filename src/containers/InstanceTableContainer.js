@@ -57,6 +57,8 @@ import CloseIcon from '@material-ui/icons/Close';
 
 import GroupColorButton from './GroupColorButton'
 
+import GroupFlowToolbar from './GroupFlowToolbar'
+
 import {getPredictions, getNestedDataFromLabels} from '../selectors';
 
 import {
@@ -179,10 +181,13 @@ const InstanceRowComponent = ({data, compact, group, histogram, onDragOver, onDr
 
       </Toolbar>
 
+      <GroupFlowToolbar group={group} flow='in'/>
+      <GroupFlowToolbar group={group} flow='out'/>
+
       <Collapse in={compact}>
         <GroupHexbin group={group} />
       </Collapse>
-    
+
     </Grid>
 
     <Grid item xs={12} sm={2}>
