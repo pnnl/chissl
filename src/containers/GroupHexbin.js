@@ -52,8 +52,8 @@ export const prepareDataForScatter = createSelector(
       .domain([-delta, delta]);
 
     const flow = {
-      in: getTotalFlow(data, 'group', 'groupBefore'),
-      out: getTotalFlow(data, 'groupBefore', 'group')
+      from: getTotalFlow(data, 'group', 'groupBefore'),
+      to: getTotalFlow(data, 'groupBefore', 'group')
     };
 
     return {data, colorScale, flow};
