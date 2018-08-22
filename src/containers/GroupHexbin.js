@@ -29,8 +29,8 @@ const getTotalFlow = (data=[], source, target) =>
     nest()
       .key(d => d[source])
       .key(d => d[target])
-      .rollup(leaves => leaves.length)
-      .map(data)
+      .rollup(leaves => leaves.map(d => d._id))
+      .map(data.filter(d => d[source] !== d[target]))
 
 export const prepareDataForScatter = createSelector(
   [ getDendrogram,
@@ -53,7 +53,7 @@ export const prepareDataForScatter = createSelector(
 
     const flow = {
       in: getTotalFlow(data, 'group', 'groupBefore'),
-      out: getTotalFlow(data, 'group', 'groupBefore')
+      out: getTotalFlow(data, 'groupBefore', 'group')
     };
 
     return {data, colorScale, flow};
