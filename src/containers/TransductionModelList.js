@@ -69,9 +69,7 @@ class ModelList extends React.Component {
         { transduction
             .sortBy(v => -(new Date(v.get('date'))))
             .map((v, k) => [
-              <ListItem key={k}
-                onClick={this.handleClick(k)}
-              >
+              <ListItem key={k}>
                 { v.has('size')
                     ? <Avatar className={classes.avatar}>
                         { formatAvatar(v.get('size')) }
@@ -101,7 +99,18 @@ class ModelList extends React.Component {
                   Open
                 </Button>
 
-                { this.state.open === k? <ExpandLess /> : <ExpandMore />}
+                <Button
+                  disabled={
+                    v.get('query', '') === '' &&
+                    v.get('project', '') === ''
+                  }
+                  onClick={this.handleClick(k)}
+                >
+                  { this.state.open === k
+                      ? <ExpandLess />
+                      : <ExpandMore />
+                  }
+                </Button>
               </ListItem>,
 
               <Collapse key={`${k}-collapse`}
