@@ -126,9 +126,9 @@ const UnlabeledDataComponent = ({data, instances, labels, onRemoveLabel, onAddLa
           }
         >
           <Grid container>
+            <GroupFlowToolbar group={-1} direction='from'/>
+            <GroupFlowToolbar group={-1} direction='to'/>
             <Grid item xs={12} sm={2} padding={16}>
-              <GroupFlowToolbar group={-1} direction='from'/>
-              <GroupFlowToolbar group={-1} direction='to'/>
               <OverviewHexbin />
             </Grid>
 
