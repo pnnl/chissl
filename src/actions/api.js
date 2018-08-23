@@ -94,7 +94,7 @@ export const createCreateModelAction = (application, data={}) =>
       { setIn: [ ['api', 'applications', application, 'transduction', data.model],
                  fromJS(data).set('date', String(new Date())) ]
       },
-      { setIn: [[...SETUP_PATH, 'model'], '']}
+      { deleteIn: [SETUP_PATH]}
     ));
 
     createMergeURLAction(
