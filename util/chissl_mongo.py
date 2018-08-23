@@ -66,6 +66,12 @@ def cluster(X, **kwargs):
 
     return parents, costs
 
+def handle_special_fields(doc):
+    for k in ['query', 'project']:
+        doc[k] = json.loads(doc[k])
+
+    return doc
+
 class ChisslMongo(object):
     def __init__(self, url=None, db='chissl', verbose=False):
         self.db = MongoClient(url)[db]
@@ -94,7 +100,7 @@ class ChisslMongo(object):
 
         return obj
         
-    def create_application(self, _id, collection, component, pipeline, drop=False):
+    def create_application(self, _id, collection, component, pipeline, props=None, drop=False):
         '''
         An application is an association of a collection (raw data), a component (visualization)
         and a pipeline (data transformation)
@@ -107,7 +113,8 @@ class ChisslMongo(object):
             '_id': _id,
             'collection': collection,
             'component': component,
-            'pipeline': pipeline
+            'pipeline': pipeline,
+            'props': props
         }
 
         self.db.applications_\
@@ -121,6 +128,8 @@ class ChisslMongo(object):
         the corresponding pipeline for the application. Clustering is also run and the
         resulting dendrogram and fitted is stored in the _models collection.
         '''
+
+        print(query)
 
         if self.verbose:
             print(f'Finding application <{applicationName}>', end='...', flush=True)
@@ -187,8 +196,8 @@ class ChisslMongo(object):
                 obj = {'_id': {'application': applicationName,
                                'model': model},
                        'date': datetime.datetime.utcnow(),
-                       'query': query,
-                       'project': project,
+                       'query': json.dumps(query),
+                       'project': json.dumps(project),
                        'labels': labels,
                        'hist': hist,
                        'pipeline': Binary(pickle.dumps(pipeline)),
@@ -201,7 +210,7 @@ class ChisslMongo(object):
                     self.db.transduction_.delete_one({'_id': obj['_id']})
 
                 self.db.transduction_\
-                    .insert_one(obj)
+                    .insert_one(obj, bypass_document_validation=True)
 
                 if self.verbose:
                     print('done.')
@@ -242,7 +251,7 @@ class ChisslMongo(object):
             return pipeline
 
     def summarize_models(self, collection, application):
-        return self.db[collection].aggregate([
+        docs = self.db[collection].aggregate([
             {'$match': {'_id.application': application}},
             {'$project': {'_id': '$_id.model',
                           'size': {'$size': { '$ifNull': [ '$instances', [] ] }},
@@ -251,6 +260,8 @@ class ChisslMongo(object):
                           'project': True,
                           'labels': True}}
         ])
+
+        return [handle_special_fields(doc) for doc in docs]
 
     def list_applications(self):
         return self.db.applications_.find()
@@ -265,7 +276,9 @@ class ChisslMongo(object):
         _id = {'application': application,
                'model': model}
 
-        return self.db.transduction_.find_one({'_id': _id})
+        doc = self.db.transduction_.find_one({'_id': _id})
+
+        return handle_special_fields(doc)
 
     def get_induction_model(self, application, model):
         _id = {'application': application,
