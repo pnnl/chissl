@@ -58,6 +58,9 @@ import ExpandableCard from '../components/ExpandableCard';
 
 import {OverviewHexbin} from './GroupHexbin'
 
+import GroupFlowToolbar from './GroupFlowToolbar'
+
+
 import {getNestedDataFromLabels} from '../selectors';
 
 import {
@@ -124,6 +127,8 @@ const UnlabeledDataComponent = ({data, instances, labels, onRemoveLabel, onAddLa
         >
           <Grid container>
             <Grid item xs={12} sm={2} padding={16}>
+              <GroupFlowToolbar group={-1} direction='from'/>
+              <GroupFlowToolbar group={-1} direction='to'/>
               <OverviewHexbin />
             </Grid>
 
