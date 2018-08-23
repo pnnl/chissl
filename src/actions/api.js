@@ -9,6 +9,10 @@ import {
   createOpenApplicationsAction,
 } from '../actions/ui'
 
+import {
+  SETUP_PATH
+} from '../actions/setup'
+
 export const DEFAULT_PATH = ['api', 'recent'];
 export const CURRENT_MODEL_PATH = ['api', 'currentModel'];
 
@@ -86,10 +90,12 @@ export const createCreateModelAction = (application, data={}) =>
   (dispatch, getState) => {
     const url = `/api/applications/${application}/transduction/`;
 
-    dispatch(createAction({
-      setIn: [ ['api', 'applications', application, 'transduction', data.model],
-               fromJS(data).set('date', String(new Date())) ]
-    }));
+    dispatch(createAction(
+      { setIn: [ ['api', 'applications', application, 'transduction', data.model],
+                 fromJS(data).set('date', String(new Date())) ]
+      },
+      { setIn: [[...SETUP_PATH, 'model'], '']}
+    ));
 
     createMergeURLAction(
       post(url, data)
