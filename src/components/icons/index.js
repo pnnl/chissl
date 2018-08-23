@@ -54,20 +54,4 @@ export const ImageComponent = ({src={}, title='Drag to another group to change c
     style={{margin: 5}}
   />
 
-const MyCustomComponent = ({src, _id, tags, ...props}) => console.log(props) || 
-  <div>
-    <ImageComponent src={src} title={`${_id} (${tags.join(', ')})`}/>
-  </div>
-
-export {MyCustomComponent as chissl_MNIST}
-
-export {ImageComponent as chissl_digits}
-
-export {TextComponent as chissl_20_Newsgroups} from './TextComponent'
-
-export {TextComponent as chissl_VAST_2014_text} from './TextComponent'
-export {VASTComponent as chissl_VAST} from './VASTComponent.js'
-export {GraphComponent as chissl_VAST_2014_Email} from './GraphComponent'
-
-export {RadarComponent as chissl_boston} from './ChartIcons'
-
+export {TrajectoryComponent} from './TrajectoryComponent'
