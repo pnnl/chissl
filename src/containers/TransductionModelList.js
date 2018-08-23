@@ -22,6 +22,7 @@ import Button from '@material-ui/core/Button'
 import ImportExportIcon from '@material-ui/icons/ImportExport'
 import ExpandLess from '@material-ui/icons/ExpandLess'
 import ExpandMore from '@material-ui/icons/ExpandMore'
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline'
 
 import {
   getCurrentNames,
@@ -70,11 +71,16 @@ class ModelList extends React.Component {
             .sortBy(v => -(new Date(v.get('date'))))
             .map((v, k) => [
               <ListItem key={k}>
-                { v.has('size')
-                    ? <Avatar className={classes.avatar}>
-                        { formatAvatar(v.get('size')) }
-                      </Avatar>
-                    : <CircularProgress />
+                {
+                  v.has('error')
+                    ? <Button color='secondary'>
+                        <ErrorOutlineIcon />
+                      </Button>
+                    : v.has('size')
+                      ? <Avatar className={classes.avatar}>
+                          { formatAvatar(v.get('size')) }
+                        </Avatar>
+                      : <CircularProgress />
                 }
 
                 <ListItemText

@@ -56,6 +56,7 @@ import InstanceTableContainer from './containers/InstanceTableContainer';
 import UnlabeledDataContainer from './containers/UnlabeledDataContainer';
 import MoreDrawerContainer from './containers/MoreDrawerContainer';
 import ActiveLearningTableContainer from './containers/ActiveLearningTableContainer'
+import ErrorSnackbar from './containers/ErrorSnackbar'
 
 const styles = theme => ({
   column: {
@@ -84,6 +85,8 @@ class App extends Component {
             ? <ActiveLearningTableContainer />
             : <InstanceTableContainer/>
         }
+
+        <ErrorSnackbar />
 
       </div>
     );

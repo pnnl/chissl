@@ -13,6 +13,10 @@ import {
   SETUP_PATH
 } from '../actions/setup'
 
+import {
+  createCreateErrorAction
+} from '../actions/errors'
+
 export const DEFAULT_PATH = ['api', 'recent'];
 export const CURRENT_MODEL_PATH = ['api', 'currentModel'];
 
@@ -21,22 +25,30 @@ const reviver = (key, value) =>
     ? value.toOrderedMap()
     : value.toArray()
 
+const getPathFromResponse = response =>
+  response.config.url
+    .split('/')
+    .filter(s => s.length)
+
 export const createMergeURLAction = (promise, saveTo=DEFAULT_PATH) =>
   dispatch =>
     promise
       .then(response => {
-        const path = response.config.url
-          .split('/')
-          .filter(s => s.length);
+        if (response) {
+          const path = getPathFromResponse(response);
 
-        dispatch(createAction({
-          setIn: [saveTo, path],
-          mergeDeepIn: [
-            path,
-            fromJS(response.data, reviver)
-          ]
-        }));
+          dispatch(createAction({
+            setIn: [saveTo, path],
+            mergeDeepIn: [
+              path,
+              fromJS(response.data, reviver)
+            ]
+          }));
+        }
       })
+      .catch(error =>
+        dispatch(createCreateErrorAction(error))
+      )
 
 export const getCurrentNames = (state, path=DEFAULT_PATH) => {
   const data = state.getIn(path, []);
@@ -89,9 +101,10 @@ export const createSetApplicationAction = application =>
 export const createCreateModelAction = (application, data={}) => 
   (dispatch, getState) => {
     const url = `/api/applications/${application}/transduction/`;
+    const path = ['api', 'applications', application, 'transduction', data.model];
 
     dispatch(createAction(
-      { setIn: [ ['api', 'applications', application, 'transduction', data.model],
+      { setIn: [ path,
                  fromJS(data).set('date', String(new Date())) ]
       },
       { deleteIn: [SETUP_PATH]}
@@ -99,6 +112,10 @@ export const createCreateModelAction = (application, data={}) =>
 
     createMergeURLAction(
       post(url, data)
+        .catch(error => {
+          dispatch(createAction({setIn: [[...path, 'error'], error]}));
+          throw error;
+        })
     )(dispatch, getState);
   }
 
