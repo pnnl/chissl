@@ -98,7 +98,7 @@ class ExpandableCard extends Component {
             subheader={subheader}
           />
           
-          <Collapse in={this.state.expanded} transitionDuration="auto">
+          <Collapse in={this.state.expanded}>
             { children &&
               <CardContent>
                 { React.cloneElement(children) }
