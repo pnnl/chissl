@@ -119,18 +119,20 @@ class ModelList extends React.Component {
                 unmountOnExit
               >
                 <List component="div" disablePadding>
-                  { ['query', 'project'].map(d =>
-                      <ListItem key={d}
-                        button
-                        className={classes.nested}
-                        onClick={() => onClick && onClick(d, v.get(d))}
-                      >
-                        <ListItemText
-                          primary={v.get(d)}
-                          secondary={d}
-                        />
-                      </ListItem>
-                    )
+                  { ['query', 'project']
+                      .filter(d => v.get(d, '') !== '')
+                      .map(d =>
+                        <ListItem key={d}
+                          button
+                          className={classes.nested}
+                          onClick={() => onClick && onClick(d, v.get(d))}
+                        >
+                          <ListItemText
+                            primary={v.get(d)}
+                            secondary={d}
+                          />
+                        </ListItem>
+                      )
                   }
                 </List>
               </Collapse>
