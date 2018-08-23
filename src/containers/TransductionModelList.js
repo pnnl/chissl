@@ -66,64 +66,66 @@ class ModelList extends React.Component {
         </ListSubheader>
       }
       >
-        { transduction.map((v, k) => [
-            <ListItem key={k}
-              onClick={this.handleClick(k)}
-            >
-              { v.has('size')
-                  ? <Avatar className={classes.avatar}>
-                      { formatAvatar(v.get('size')) }
-                    </Avatar>
-                  : <CircularProgress />
-              }
-
-              <ListItemText
-                primary={k}
-                secondary={`${v.get('labels', Map()).size} // ${v.get('date')}`}
-              />
-
-              <ListItemIcon disabled={!induction.has(k)}>
-                <ImportExportIcon />
-              </ListItemIcon>
-
-              <Button
-                disabled={!v.has('size')}
-                variant='contained'
-                color='primary'
-                className={classes.button}
-                onClick={ev => {
-                  ev.stopPropagation();
-                  onOpen && onOpen(application, k)
-                }}
+        { transduction
+            .sortBy(v => -(new Date(v.get('date'))))
+            .map((v, k) => [
+              <ListItem key={k}
+                onClick={this.handleClick(k)}
               >
-                Open
-              </Button>
-
-              {this.state.open === k? <ExpandLess /> : <ExpandMore />}
-            </ListItem>,
-
-            <Collapse key={`${k}-collapse`}
-              in={this.state.open === k}
-              timeout="auto"
-              unmountOnExit
-            >
-              <List component="div" disablePadding>
-                { ['query', 'project'].map(d =>
-                    <ListItem key={d}
-                      button
-                      className={classes.nested}
-                      onClick={() => onClick && onClick(d, v.get(d))}
-                    >
-                      <ListItemText
-                        primary={v.get(d)}
-                        secondary={d}
-                      />
-                    </ListItem>
-                  )
+                { v.has('size')
+                    ? <Avatar className={classes.avatar}>
+                        { formatAvatar(v.get('size')) }
+                      </Avatar>
+                    : <CircularProgress />
                 }
-              </List>
-            </Collapse>
-          ]).valueSeq()
+
+                <ListItemText
+                  primary={k}
+                  secondary={`${v.get('labels', Map()).size} // ${v.get('date')}`}
+                />
+
+                <ListItemIcon disabled={!induction.has(k)}>
+                  <ImportExportIcon />
+                </ListItemIcon>
+
+                <Button
+                  disabled={!v.has('size')}
+                  variant='contained'
+                  color='primary'
+                  className={classes.button}
+                  onClick={ev => {
+                    ev.stopPropagation();
+                    onOpen && onOpen(application, k)
+                  }}
+                >
+                  Open
+                </Button>
+
+                { this.state.open === k? <ExpandLess /> : <ExpandMore />}
+              </ListItem>,
+
+              <Collapse key={`${k}-collapse`}
+                in={this.state.open === k}
+                timeout="auto"
+                unmountOnExit
+              >
+                <List component="div" disablePadding>
+                  { ['query', 'project'].map(d =>
+                      <ListItem key={d}
+                        button
+                        className={classes.nested}
+                        onClick={() => onClick && onClick(d, v.get(d))}
+                      >
+                        <ListItemText
+                          primary={v.get(d)}
+                          secondary={d}
+                        />
+                      </ListItem>
+                    )
+                  }
+                </List>
+              </Collapse>
+            ]).valueSeq()
         }
       </List>
   }
