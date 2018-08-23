@@ -48,7 +48,7 @@ class NewModelList extends React.Component {
   render() {
     const {
       application,
-      model, labels={}, query={}, project={},
+      model='', labels={}, query={}, project={},
       classes,
       onChange, onCreate,
     } = this.props;
@@ -132,11 +132,11 @@ class NewModelList extends React.Component {
 
 export default connect(
   state => ({
+    ...getCurrentNames(state),
     model: state.getIn([...SETUP_PATH, 'model']),
     labels: state.getIn([...SETUP_PATH, 'labels']),
     query: state.getIn([...SETUP_PATH, 'query']),
     project: state.getIn([...SETUP_PATH, 'project']),
-    ...getCurrentNames(state)
   }),
   dispatch => bindActionCreators({
     onChange: createSetupAction,
