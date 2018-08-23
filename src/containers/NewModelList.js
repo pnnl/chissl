@@ -48,7 +48,7 @@ class NewModelList extends React.Component {
   render() {
     const {
       application,
-      model='', labels={}, query={}, project={},
+      model='', query='', project='',
       classes,
       onChange, onCreate,
     } = this.props;
@@ -88,7 +88,7 @@ class NewModelList extends React.Component {
                 ev.stopPropagation();
                 onCreate(
                   application,
-                  {model, labels, query, project}
+                  {model, query, project}
                 );
               }}
             >
@@ -113,7 +113,7 @@ class NewModelList extends React.Component {
                         <ValidatedTextArea
                           value={this.props[d]}
                           onChange={v => onChange(d, v)}
-                          validate={JSON.parse}
+                          validate={v => !v || JSON.parse(v)}
                         >
                           <TextField fullWidth multiline />
                         </ValidatedTextArea>

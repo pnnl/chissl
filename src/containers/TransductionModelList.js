@@ -79,7 +79,7 @@ class ModelList extends React.Component {
 
               <ListItemText
                 primary={k}
-                secondary={`${v.get('labels').size} // ${v.get('date')}`}
+                secondary={`${v.get('labels', Map()).size} // ${v.get('date')}`}
               />
 
               <ListItemIcon disabled={!induction.has(k)}>
