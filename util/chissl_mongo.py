@@ -35,6 +35,8 @@
 #      DAMAGE.
 
 from pymongo import MongoClient
+import gridfs
+
 import json, pickle, datetime
 from bson.binary import Binary
 
@@ -68,8 +70,11 @@ def cluster(X, **kwargs):
 
 class ChisslMongo(object):
     def __init__(self, url=None, db='chissl', verbose=False):
-        self.db = MongoClient(url)[db]
         self.verbose = verbose
+
+        self.client = MongoClient(url)
+        self.db = self.client[db]
+        self.transduction_ = gridfs.GridFS(self.client[f'{db}_transduction_'])
 
     def create_collection(self, collection, docs, drop=False):
         if drop:
@@ -198,9 +203,9 @@ class ChisslMongo(object):
                        'X': X_transform.tolist()}
 
                 if drop:                    
-                    self.db.transduction_.delete_one({'_id': obj['_id']})
+                    self.transduction_.delete_one({'_id': obj['_id']})
 
-                self.db.transduction_\
+                self.transduction_\
                     .insert_one(obj, bypass_document_validation=True)
 
                 if self.verbose:
@@ -212,7 +217,7 @@ class ChisslMongo(object):
         _id = {'application': application,
                'model': model}
 
-        doc = self.db.transduction_\
+        doc = self.transduction_\
             .find_one({'_id': _id})
 
         if doc:
@@ -265,7 +270,7 @@ class ChisslMongo(object):
         _id = {'application': application,
                'model': model}
 
-        return self.db.transduction_.find_one({'_id': _id})
+        return self.transduction_.find_one({'_id': _id})
 
     def get_induction_model(self, application, model):
         _id = {'application': application,
