@@ -65,10 +65,10 @@ export default connect(
     );
 
     return {
-      // props: state.getIn(['data', 'props']),
       draggable: true,
       collection: applicationData.get('collection'),
       component: applicationData.get('component'),
+      props: applicationData.get('props', Map()).toJS(),
       ...rest
     };
   },
