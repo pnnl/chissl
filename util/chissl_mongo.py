@@ -229,11 +229,10 @@ class ChisslMongo(object):
                 return obj
 
     def deploy(self, application, model, labels, Classifier=SVC, drop=False):
+        doc = self.get_transduction_model(application, model)
+
         _id = {'application': application,
                'model': model}
-
-        doc = self.transduction_\
-            .find_one({'_id': _id})
 
         if doc:
             index = doc['instances']
