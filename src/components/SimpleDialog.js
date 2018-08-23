@@ -23,12 +23,12 @@ const SimpleDialog = ({title='Title', cancel, submit, button, children, onClose,
     { (cancel || submit) &&
       <DialogActions>
         { cancel &&
-          <Button onClick={() => onClose && onClose()} color='secondary'>
+          <Button onClick={() => onClose && onClose()} color='secondary' variant='outlined'>
             { cancel }
           </Button>
         }
         { submit &&
-          <Button onClick={() => onSubmit && onSubmit()} color='primary'>
+          <Button onClick={() => onSubmit && onSubmit()} color='primary' variant='contained'>
             { submit }
           </Button>
         }
