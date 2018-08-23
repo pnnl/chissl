@@ -34,6 +34,7 @@
 #      OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 #      DAMAGE.
 
+import bson
 from pymongo import MongoClient
 import gridfs
 
@@ -189,24 +190,38 @@ class ChisslMongo(object):
                 if self.verbose:
                     print('OK')
 
-                obj = {'_id': {'application': applicationName,
-                               'model': model},
-                       'date': datetime.datetime.utcnow(),
-                       'query': query,
-                       'project': project,
-                       'labels': labels,
-                       'hist': hist,
-                       'pipeline': Binary(pickle.dumps(pipeline)),
-                       'parents': parents.tolist(),
-                       'costs': costs.tolist(),
-                       'instances': index,
-                       'X': X_transform.tolist()}
 
-                if drop:                    
-                    self.transduction_.delete_one({'_id': obj['_id']})
+
+                obj_computed_bson = bson.BSON.encode({
+                   'labels': labels,
+                   'hist': hist,
+                   'pipeline': Binary(pickle.dumps(pipeline)),
+                   'parents': parents.tolist(),
+                   'costs': costs.tolist(),
+                   'instances': index,
+                   'X': X_transform.tolist()
+                })
+
+                obj = {
+                    '_id': {'application': applicationName,
+                            'model': model},
+                    'date': datetime.datetime.utcnow(),
+                    'query': query,
+                    'project': project,
+                    'size': len(index),
+                    '_id_computed': self.transduction_.put(obj_computed_bson)
+                }
+
+                if drop:
+                    for doc in self.db.transduction_.find({'_id': obj['_id']}):
+                        self.transduction_.delete(doc['_id_computed'])
+                        self.db.transduction_.delete_one({'_id': doc['_id']})
 
                 self.transduction_\
-                    .insert_one(obj, bypass_document_validation=True)
+                    .put(obj_computed_bson)
+
+                self.db.transduction_\
+                    .insert_one(obj)
 
                 if self.verbose:
                     print('done.')
@@ -250,11 +265,10 @@ class ChisslMongo(object):
         return self.db[collection].aggregate([
             {'$match': {'_id.application': application}},
             {'$project': {'_id': '$_id.model',
-                          'size': {'$size': { '$ifNull': [ '$instances', [] ] }},
                           'date': True,
                           'query': True,
                           'project': True,
-                          'labels': True}}
+                          'size': True}}
         ])
 
     def list_applications(self):
@@ -270,7 +284,12 @@ class ChisslMongo(object):
         _id = {'application': application,
                'model': model}
 
-        return self.transduction_.find_one({'_id': _id})
+        doc = self.db.transduction_.find_one({'_id': _id})
+        doc_computed = self.transduction_.get(doc['_id_computed'])
+        doc.update(bson.BSON.decode(doc_computed.read()))
+        del doc['_id_computed']
+
+        return doc
 
     def get_induction_model(self, application, model):
         _id = {'application': application,
