@@ -114,6 +114,9 @@ export const getPredictions = createSelector(
 
     const {classes, distances, key} = predictions;
 
+    // copy whatever the state of the classification is before recalculating
+    const previousClasses = [...classes];
+
     labels = labels
       .entrySeq()
       .map(([k, v]) => [lookup.get(k), v])
@@ -134,8 +137,6 @@ export const getPredictions = createSelector(
         applyLabel(dendrogram, classes, distances, k, v)
       );
     }
-
-    const previousClasses = [...classes];
 
     // apply the most recent label
     if (labels.length) {
