@@ -66,12 +66,6 @@ def cluster(X, **kwargs):
 
     return parents, costs
 
-def handle_special_fields(doc):
-    for k in ['query', 'project']:
-        doc[k] = json.loads(doc[k])
-
-    return doc
-
 class ChisslMongo(object):
     def __init__(self, url=None, db='chissl', verbose=False):
         self.db = MongoClient(url)[db]
@@ -122,14 +116,12 @@ class ChisslMongo(object):
         
         return obj
     
-    def create_model(self, applicationName, model='default', query={}, project={}, labels={}, drop=False):
+    def create_model(self, applicationName, model='default', query=None, project=None, labels={}, drop=False):
         '''
         Creates a trained model by querying the corresponding collection and fitting
         the corresponding pipeline for the application. Clustering is also run and the
         resulting dendrogram and fitted is stored in the _models collection.
         '''
-
-        print(query)
 
         if self.verbose:
             print(f'Finding application <{applicationName}>', end='...', flush=True)
@@ -151,10 +143,9 @@ class ChisslMongo(object):
             collection = self.db[collectionName]
 
             if self.verbose:
-                print(f'OK\nQuerying collection <{collectionName}>', end='...', flush=True)
-
+                print(f'OK\nQuerying collection <{collectionName}> <{query}>', end='...', flush=True)
             
-            X = list(collection.find(query))
+            X = list(collection.find(json.loads(query) if query else {}))
 
             if len(X):
                 print(f'found {len(X)}...OK')
@@ -163,12 +154,12 @@ class ChisslMongo(object):
                 index = [x['_id'] for x in X]
 
                 hist = None
-                if project:
+                if project and json.loads(project) != {}:
                     if self.verbose:
-                        print('Projecting data for histograms', end='...')
+                        print(f'Projecting data for histograms {project}', end='...', flush=True)
                     data = collection.aggregate([
                         {'$match': {'_id': {'$in': index}}},
-                        {'$project': project}
+                        {'$project': json.loads(project)}
                     ])
 
                     hist = pd.DataFrame(list(data))\
@@ -196,8 +187,8 @@ class ChisslMongo(object):
                 obj = {'_id': {'application': applicationName,
                                'model': model},
                        'date': datetime.datetime.utcnow(),
-                       'query': json.dumps(query),
-                       'project': json.dumps(project),
+                       'query': query,
+                       'project': project,
                        'labels': labels,
                        'hist': hist,
                        'pipeline': Binary(pickle.dumps(pipeline)),
@@ -251,7 +242,7 @@ class ChisslMongo(object):
             return pipeline
 
     def summarize_models(self, collection, application):
-        docs = self.db[collection].aggregate([
+        return self.db[collection].aggregate([
             {'$match': {'_id.application': application}},
             {'$project': {'_id': '$_id.model',
                           'size': {'$size': { '$ifNull': [ '$instances', [] ] }},
@@ -260,8 +251,6 @@ class ChisslMongo(object):
                           'project': True,
                           'labels': True}}
         ])
-
-        return [handle_special_fields(doc) for doc in docs]
 
     def list_applications(self):
         return self.db.applications_.find()
@@ -276,9 +265,7 @@ class ChisslMongo(object):
         _id = {'application': application,
                'model': model}
 
-        doc = self.db.transduction_.find_one({'_id': _id})
-
-        return handle_special_fields(doc)
+        return self.db.transduction_.find_one({'_id': _id})
 
     def get_induction_model(self, application, model):
         _id = {'application': application,

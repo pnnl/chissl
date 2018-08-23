@@ -9,8 +9,14 @@ class ValidatedTextArea extends React.Component {
     const {onChange, validate} = this.props;
 
     try {
-      emit && onChange(validate(value));
-      this.setState({error: undefined});
+      if (!validate || validate(value)) {
+        // validation passed
+        emit && onChange(value);
+        this.setState({error: undefined});
+      } else {
+        // validation didn't except, but returned false
+        this.setState({error: 'Invalid'})
+      }
     } catch(exn) {
       this.setState({error: String(exn)});
     }

@@ -70,7 +70,6 @@ class NewModelList extends React.Component {
                 <ValidatedTextArea
                   value={model}
                   onChange={v => onChange('model', v)}
-                  validate={d => d}
                 >
                   <TextField
                     fullWidth
@@ -105,14 +104,14 @@ class NewModelList extends React.Component {
             unmountOnExit
           >
             <List component="div" disablePadding>
-              { ['labels', 'query', 'project'].map(d =>
+              { ['query', 'project'].map(d =>
                   <ListItem key={d}
                     className={classes.nested}
                   >
                     <ListItemText
                       primary={
                         <ValidatedTextArea
-                          value={JSON.stringify(this.props[d] || {})}
+                          value={this.props[d]}
                           onChange={v => onChange(d, v)}
                           validate={JSON.parse}
                         >

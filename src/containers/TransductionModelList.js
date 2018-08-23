@@ -108,14 +108,14 @@ class ModelList extends React.Component {
               unmountOnExit
             >
               <List component="div" disablePadding>
-                { ['labels', 'query', 'project'].map(d =>
+                { ['query', 'project'].map(d =>
                     <ListItem key={d}
                       button
                       className={classes.nested}
-                      onClick={() => onClick && onClick(d, v.get(d).toJS())}
+                      onClick={() => onClick && onClick(d, v.get(d))}
                     >
                       <ListItemText
-                        primary={JSON.stringify(v.get(d).toJS())}
+                        primary={v.get(d)}
                         secondary={d}
                       />
                     </ListItem>
