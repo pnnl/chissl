@@ -45,6 +45,7 @@ import {createSelector} from 'reselect';
 import {Map, Set} from 'immutable';
 
 import Select from 'react-select'
+import 'react-select/dist/react-select.min.css'
 
 import {nest} from 'd3-collection'
 import {max, extent, histogram, merge} from 'd3-array';
@@ -53,16 +54,17 @@ import {format} from 'd3-format';
 
 import {createSetHistogramNameAction} from '../actions/ui'
 
-import {XYPlot, XAxis, YAxis, VerticalBarSeries} from 'react-vis';
+import {FlexibleWidthXYPlot, XAxis, YAxis, VerticalBarSeries} from 'react-vis';
 import 'react-vis/dist/style.css';
 
 import {getPredictions, getDendrogram, getNestedDataFromLabels} from '../selectors';
 
 import {createShowMoreAction} from '../actions/ui';
+import {getModelPath} from '../actions/api'
 
 const getHistogramData = createSelector(
-  [ state => state.getIn(['data', 'hist'], {}) ],
-  data => Map(data).map(series => {
+  [ state => state.getIn(getModelPath('hist')) ],
+  data => data.map(series => {
     const test = series[0];
     
     const xType = typeof(test);
@@ -125,8 +127,8 @@ const getTimeline = createSelector(
     getDomain,
     getHistogramData,
     getHistogramSelectProps,
-    state => state.getIn(['data', 'instances']),
-    state => state.getIn(['ui', 'labels']),
+    state => state.getIn(getModelPath('instances')),
+    state => state.getIn(getModelPath('labels')),
     (state, {group}) => group
   ],
   (data, xDomain, histData, {value}, instances, labels, group) => {
@@ -197,9 +199,8 @@ const Histogram = ({data=[], instances, onClick, xDomain, ...rest}) => {
   const crowded = Math.max(max(data, d => d.length), (xDomain || []).length) > 3;
 
   return data.length
-    ? <XYPlot
+    ? <FlexibleWidthXYPlot
         height={150}
-        width={350}
         margin={{
           left: 35,
           right: 10,
@@ -221,7 +222,7 @@ const Histogram = ({data=[], instances, onClick, xDomain, ...rest}) => {
 
         <XAxis tickLabelAngle={crowded ? -45 : 0} />
         <YAxis tickFormat={tickFormat} />
-      </XYPlot>
+      </FlexibleWidthXYPlot>
     : <div />
 }
 

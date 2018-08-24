@@ -289,7 +289,7 @@ export default connect(
     return {
       data: getNestedDataFromLabels(state),
       labels: data.get('labels'),
-      histogram: data.get('histogram', Map()).size > 0
+      histogram: data.get('hist', Map()).size > 0
     }
   },
   dispatch => bindActionCreators({
