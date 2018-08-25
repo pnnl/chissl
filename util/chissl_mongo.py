@@ -129,6 +129,10 @@ class ChisslMongo(object):
         resulting dendrogram and fitted is stored in the _models collection.
         '''
 
+        # convert labels to tokens
+        tokens = defaultdict(lambda : len(tokens))
+        token_labels = {k: tokens[v] for k, v in labels.items()}
+
         if self.verbose:
             print(f'Finding application <{applicationName}>', end='...', flush=True)
 
@@ -153,28 +157,14 @@ class ChisslMongo(object):
             
             X = list(collection.find(json.loads(query) if query else {}))
 
+
             if len(X):
                 print(f'found {len(X)}...OK')
 
-                y = [labels.get(xi['_id'], -1) for xi in X]
+                print('labels', len(labels), labels)
+
+                y = [token_labels.get(xi['_id'], -1) for xi in X]
                 index = [x['_id'] for x in X]
-
-                hist = None
-                if project and json.loads(project) != {}:
-                    if self.verbose:
-                        print(f'Projecting data for histograms {project}', end='...', flush=True)
-                    data = collection.aggregate([
-                        {'$match': {'_id': {'$in': index}}},
-                        {'$project': json.loads(project)}
-                    ])
-
-                    hist = pd.DataFrame(list(data))\
-                        .set_index('_id')\
-                        .loc[index]\
-                        .to_dict(orient='list')
-
-                    if self.verbose:
-                        print('OK')
 
                 if self.verbose:
                     print('Transforming data', end='...', flush=True)
@@ -191,25 +181,40 @@ class ChisslMongo(object):
                     print('OK')
 
 
-
-                obj_computed_bson = bson.BSON.encode({
-                   'labels': labels,
-                   'hist': hist,
+                obj_computed = {
                    'pipeline': Binary(pickle.dumps(pipeline)),
                    'parents': parents.tolist(),
                    'costs': costs.tolist(),
                    'instances': index,
                    'X': X_transform.tolist()
-                })
+                }
+
+                if project and json.loads(project) != {}:
+                    if self.verbose:
+                        print(f'Projecting data for histograms {project}', end='...', flush=True)
+                    data = collection.aggregate([
+                        {'$match': {'_id': {'$in': index}}},
+                        {'$project': json.loads(project)}
+                    ])
+
+                    obj_computed['hist'] = pd.DataFrame(list(data))\
+                        .set_index('_id')\
+                        .loc[index]\
+                        .to_dict(orient='list')
+
+                    if self.verbose:
+                        print('OK')
 
                 obj = {
                     '_id': {'application': applicationName,
                             'model': model},
+                    'labels': labels,
+                    'tokens': sorted(tokens, key=tokens.get),
                     'date': datetime.datetime.utcnow(),
                     'query': query,
                     'project': project,
                     'size': len(index),
-                    '_id_computed': self.transduction_.put(obj_computed_bson)
+                    '_id_computed': self.transduction_.put(bson.BSON.encode(obj_computed))
                 }
 
                 if drop:
@@ -217,14 +222,13 @@ class ChisslMongo(object):
                         self.transduction_.delete(doc['_id_computed'])
                         self.db.transduction_.delete_one({'_id': doc['_id']})
 
-                self.transduction_\
-                    .put(obj_computed_bson)
-
                 self.db.transduction_\
                     .insert_one(obj)
 
                 if self.verbose:
                     print('done.')
+
+                obj.update(obj_computed)
 
                 return obj
 
