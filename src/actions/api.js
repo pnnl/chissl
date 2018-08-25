@@ -54,7 +54,7 @@ export const getCurrentNames = (state, path=DEFAULT_PATH) => {
   const data = state.getIn(path, []);
   return {
     application: data[2],
-    model: data[3]
+    model: data[4]
   };
 }
 
