@@ -34,7 +34,10 @@ export const createMergeURLAction = (promise, saveTo=DEFAULT_PATH) =>
   dispatch =>
     promise
       .then(response => {
-        if (response) {
+        console.log('Merging', response);
+
+        if (response && response.data) {
+
           const path = getPathFromResponse(response);
 
           dispatch(createAction({
@@ -78,16 +81,28 @@ export const createUpdateDatasetAction = () => (dispatch, getState) => {
   const state = getState();
   const {application, model} = getCurrentNames(state, CURRENT_MODEL_PATH);
 
-  const keys = {'labels': true, 'query': true, 'project': true};
-  const params = getCurrentData(state)
-    .filter((v, k) => k in keys)
+  const path = getModelPath();
+  
+  const labels = state.getIn([...path, 'labels'])
     .toJS();
 
   createMergeURLAction(
     post(
       `/api/applications/${application}/transduction/${model}`,
-      params
-    ),
+      {labels}
+    ).then(response => {
+      console.log('Deleting old structure');
+      
+      dispatch(createAction(
+        {deleteIn: [[...path, 'parents']]},
+        {deleteIn: [[...path, 'costs']]},
+        {deleteIn: [[...path, 'instances']]},
+        {deleteIn: [[...path, 'labels']]},
+        {deleteIn: [[...path, 'X']]},
+      ))
+
+      return response;
+    }),
     CURRENT_MODEL_PATH
   )(dispatch, getState);
 };
