@@ -72,13 +72,10 @@ def start_app(app, mongo, **kwargs):
             obj = chissl.create_model(application, model, drop=True, **kwargs)
         else:
             obj = chissl.get_transduction_model(application, model)
-        
-        if obj:
-            del obj['pipeline']
 
-            return jsonify(obj)
-        else:
-            return jsonify({})
+        obj['_id_computed'] = obj['pipeline'] = None
+
+        return jsonify(obj)
 
     deployed = {}
 
