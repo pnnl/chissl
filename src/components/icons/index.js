@@ -55,3 +55,4 @@ export const ImageComponent = ({src={}, title='Drag to another group to change c
   />
 
 export {TrajectoryComponent} from './TrajectoryComponent'
+export {MapTrajectoryComponent} from './MapTrajectoryComponent'
