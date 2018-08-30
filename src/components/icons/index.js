@@ -40,20 +40,7 @@
 
 import React from 'react';
 
-import 'font-awesome/css/font-awesome.css';
-
-import './Image.css';
-
-import PopoverComponent from './PopoverComponent'
-
-export const ImageComponent = ({src={}, title='Drag to another group to change class'}) =>
-  <img
-    title={title}
-    className='image-component'
-    src={`data:image/${src.type};base64,${src.data}`}
-    style={{margin: 5}}
-  />
-
+export {ImageComponent} from './ImageComponent'
 export {NewsgroupsComponent} from './NewsgroupsComponent'
 export {TrajectoryComponent} from './TrajectoryComponent'
 export {MapTrajectoryComponent} from './MapTrajectoryComponent'
