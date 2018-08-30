@@ -17,5 +17,5 @@ class JSONFeatureExtractor(TransformerMixin):
 
 SimplePipeline = Pipeline([
     ('extract', JSONFeatureExtractor(field='features')),
-    ('norm', StandardScaler()),
+    ('nmf', NMF(30)),
 ])
