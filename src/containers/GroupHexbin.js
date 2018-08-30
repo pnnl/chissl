@@ -95,7 +95,7 @@ const OverviewHexbinComponent = ({data=[], colors=Map(), onClick}) => {
     return {
       onClick: () => onClick(d.map(({_id}) => _id)),
       style: {
-        fill: colors.get(key, 'none'),
+        fill: colors.get(key, 'white'),
         fillOpacity: value
       }
     };
