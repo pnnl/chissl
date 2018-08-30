@@ -35,7 +35,7 @@
 #      OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 #      DAMAGE.
 
-import os
+import os, json
 from flask import Flask, jsonify, request
 from util import chissl_mongo as cm
 
@@ -60,6 +60,11 @@ def start_app(app, mongo, **kwargs):
     def create_transduction_model(application):
         if request.method == 'POST':
             kwargs = request.get_json() or {}
+
+            for k in ['project', 'query']:
+                if kwargs.get(k) not in {None, ''}:
+                    kwargs[k] = json.loads(kwargs[k])
+
             chissl.create_model(application, **kwargs)
 
         return jsonify(as_dict(chissl.list_transduction_models(application)))
