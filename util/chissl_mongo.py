@@ -180,7 +180,7 @@ class ChisslMongo(object):
             if self.verbose:
                 print(f'OK\nQuerying collection <{collectionName}> <{query}>', end='...', flush=True)
             
-            X = list(collection.find(json.loads(query) if query else {}))
+            X = list(collection.find(query or {}))
 
 
             if len(X):
@@ -216,12 +216,12 @@ class ChisslMongo(object):
                    'X': X_transform.tolist()
                 }
 
-                if project and json.loads(project) != {}:
+                if project and project != {}:
                     if self.verbose:
                         print(f'Projecting data for histograms {project}', end='...', flush=True)
                     data = collection.aggregate([
                         {'$match': {'_id': {'$in': index}}},
-                        {'$project': json.loads(project)}
+                        {'$project': project}
                     ])
 
                     obj_computed['hist'] = pd.DataFrame(list(data))\
@@ -238,8 +238,8 @@ class ChisslMongo(object):
                     'labels': labels,
                     'tokens': sorted(tokens, key=tokens.get),
                     'date': datetime.datetime.utcnow(),
-                    'query': query,
-                    'project': project,
+                    'query': json.dumps(query, indent=2),
+                    'project': json.dumps(project, indent=2),
                     'size': len(index),
                     '_id_computed': self.transduction_.put(bson.BSON.encode(obj_computed))
                 }
