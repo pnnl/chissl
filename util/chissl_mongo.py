@@ -125,7 +125,7 @@ class ChisslMongo(object):
 
         return obj
         
-    def create_application(self, _id, collection, component, pipeline, props=None, drop=False):
+    def create_application(self, _id, collection, component, pipeline, props={}, drop=False):
         '''
         An application is an association of a collection (raw data), a component (visualization)
         and a pipeline (data transformation)
