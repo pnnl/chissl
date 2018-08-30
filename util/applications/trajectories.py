@@ -52,5 +52,4 @@ pipeline = Pipeline([
   # ('nmf', NMF(n_components=50)),
   ('norm', StandardScaler()),
   # ('norm', Normalizer('l1')),
-  ('umap', UMAP())
 ])

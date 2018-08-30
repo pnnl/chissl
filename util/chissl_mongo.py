@@ -54,6 +54,8 @@ from collections import defaultdict
 
 from scipy.spatial.distance import cdist
 
+from umap import UMAP
+
 def get_cost(X, children):
 
     n = len(X) + len(children)
@@ -194,14 +196,17 @@ class ChisslMongo(object):
                 if self.verbose:
                     print('Transforming data', end='...', flush=True)
 
-                pipeline = pydoc.locate(application['pipeline'])
+                umap = UMAP()
+                base_pipeline = pydoc.locate(application['pipeline']).steps
+                pipeline = Pipeline(base_pipeline + [('umap', umap)])
+                
                 X_transform = pipeline.fit_transform(X, y)
 
                 if self.verbose:
                     print('OK\nClustering data', end='...', flush=True)
 
                 parents, costs = cluster(X_transform,
-                                         connectivity=pipeline.named_steps['umap'].graph_,
+                                         connectivity=umap.graph_,
                                          linkage='ward')
 
                 if self.verbose:

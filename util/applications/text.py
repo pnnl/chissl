@@ -9,8 +9,6 @@ from sklearn.preprocessing import Normalizer, StandardScaler
 import nltk
 from nltk.stem.porter import PorterStemmer
 
-from umap import UMAP
-
 class JSONFeatureExtractor(TransformerMixin):
     def __init__(self, field):
         self.field = field
@@ -51,5 +49,4 @@ TextPipeline = Pipeline([
     ('tfidf', JSONTfidfVectorizer(stop_words='english', min_df=5, max_df=.2, sublinear_tf=True)),
     ('nmf', NMF(n_components=30)),
     ('norm', Normalizer('l1')),
-    ('umap', UMAP(metric='cosine'))
 ])

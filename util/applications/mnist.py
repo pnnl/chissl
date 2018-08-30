@@ -5,8 +5,6 @@ from sklearn.base import TransformerMixin
 from sklearn.decomposition import NMF
 from sklearn.preprocessing import Normalizer, StandardScaler
 
-from umap import UMAP
-
 class JSONFeatureExtractor(TransformerMixin):
     def __init__(self, field):
         self.field = field
@@ -20,5 +18,4 @@ class JSONFeatureExtractor(TransformerMixin):
 SimplePipeline = Pipeline([
     ('extract', JSONFeatureExtractor(field='features')),
     ('norm', StandardScaler()),
-    ('umap', UMAP())
 ])
