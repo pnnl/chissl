@@ -43,31 +43,56 @@ from bson.binary import Binary
 
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
+from sklearn.cluster import AgglomerativeClustering
 
 import numpy as np
 import pandas as pd
-
-from fastcluster import linkage
 
 import pydoc
 
 from collections import defaultdict
 
+from scipy.spatial.distance import cdist
+
+def get_cost(X, children):
+
+    n = len(X) + len(children)
+
+    X_tot = np.zeros((n, X.shape[1]))
+    X_tot[:len(X)] = X
+
+    N = np.zeros(n)
+    N[:len(X)] = 1
+
+    C = np.zeros(n)
+
+    for i,(u,v) in enumerate(children):
+        p = i + len(X)
+
+        X_tot[p] = X_tot[u] + X_tot[v]
+        N[p] = N[u] + N[v]
+
+        xu = X_tot[u]/N[u]
+        xv = X_tot[v]/N[v]
+        xp = X_tot[p]/N[p]
+
+        C[u], C[v] = cdist([xp], [xu, xv]).flat
+        
+    return C
+
 def cluster(X, **kwargs):
-    Z = linkage(X, method='ward')
+    children = AgglomerativeClustering(**kwargs)\
+        .fit(X)\
+        .children_
+
     n = len(X)
-    m = len(Z)
+    m = len(children)
 
-    left, right = Z[:,:2].astype('int').T
-    dist = Z[:, 2]
-
+    left, right = children.T
     parents = np.arange(n + m)
-    costs = np.zeros(n + m)
-
     parents[left] = parents[right] = np.arange(m) + n
-    costs[left] = costs[right] = dist
 
-    return parents, costs
+    return parents, get_cost(X, children)
 
 class ChisslMongo(object):
     def __init__(self, url=None, db='chissl', verbose=False):
@@ -175,7 +200,9 @@ class ChisslMongo(object):
                 if self.verbose:
                     print('OK\nClustering data', end='...', flush=True)
 
-                parents, costs = cluster(X_transform, method='ward')
+                parents, costs = cluster(X_transform,
+                                         connectivity=pipeline.named_steps['umap'].graph_,
+                                         linkage='ward')
 
                 if self.verbose:
                     print('OK')
