@@ -184,9 +184,11 @@ const InstanceRowComponent = ({data, compact, group, histogram, onDragOver, onDr
       <GroupFlowToolbar group={group} direction='from'/>
       <GroupFlowToolbar group={group} direction='to'/>
 
-      <Collapse in={compact}>
-        <GroupHexbin group={group} />
-      </Collapse>
+      { /*
+        <Collapse in={compact}>
+          <GroupHexbin group={group} />
+        </Collapse>
+      */ }
 
     </Grid>
 
