@@ -127,7 +127,7 @@ class ChisslMongo(object):
 
         return obj
         
-    def create_application(self, _id, collection, component, pipeline, props={}, drop=False):
+    def create_application(self, _id, collection, component, pipeline, props={}, umap_kwargs={}, drop=False):
         '''
         An application is an association of a collection (raw data), a component (visualization)
         and a pipeline (data transformation)
@@ -141,7 +141,8 @@ class ChisslMongo(object):
             'collection': collection,
             'component': component,
             'pipeline': pipeline,
-            'props': props
+            'props': props,
+            'umap_kwargs': umap_kwargs
         }
 
         self.db.applications_\
@@ -196,7 +197,7 @@ class ChisslMongo(object):
                 if self.verbose:
                     print('Transforming data', end='...', flush=True)
 
-                umap = UMAP()
+                umap = UMAP(**application.get('umap_kwargs', {}))
                 base_pipeline = pydoc.locate(application['pipeline']).steps
                 pipeline = Pipeline(base_pipeline + [('umap', umap)])
                 
