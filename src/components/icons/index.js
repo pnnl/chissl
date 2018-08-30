@@ -54,5 +54,6 @@ export const ImageComponent = ({src={}, title='Drag to another group to change c
     style={{margin: 5}}
   />
 
+export {NewsgroupsComponent} from './NewsgroupsComponent'
 export {TrajectoryComponent} from './TrajectoryComponent'
 export {MapTrajectoryComponent} from './MapTrajectoryComponent'
