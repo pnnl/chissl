@@ -105,6 +105,7 @@ const OverviewHexbinComponent = ({data=[], colors=Map(), onClick}) => {
     data={data}
     style={{stroke: 'darkgray', strokeWidth: 1}}
     eachPath={getStyles}
+    density={.025}
   />
 }
 
