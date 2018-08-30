@@ -21,8 +21,6 @@ class JSONFeatureExtractor(TransformerMixin):
     def transform(self, X):
         return np.vstack([xi[self.field] for xi in X]).astype(np.float)
 
-
-
 class JSONTfidfVectorizer(TfidfVectorizer):
     def __init__(self, field='content', **kwargs):
         self.field = field
@@ -54,10 +52,4 @@ TextPipeline = Pipeline([
     ('nmf', NMF(n_components=30)),
     ('norm', Normalizer('l1')),
     ('umap', UMAP(metric='cosine'))
-])
-
-DigitsPipeline = Pipeline([
-    ('extract', JSONFeatureExtractor(field='features')),
-    ('norm', StandardScaler()),
-    ('umap', UMAP())
 ])
