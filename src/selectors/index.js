@@ -110,7 +110,7 @@ export const getPredictions = createSelector(
     state => getCurrentData(state, CURRENT_MODEL_PATH).get('labels', OrderedMap())
   ],
   (dendrogram, predictions, labels) => {
-    const {lookup} = dendrogram;
+    const {lookup, instances} = dendrogram;
 
     const {classes, distances, key} = predictions;
 
@@ -146,7 +146,7 @@ export const getPredictions = createSelector(
 
     predictions.key = JSON.stringify(labels);
 
-    return {previousClasses, classes, distances};
+    return {previousClasses, classes, distances, instances};
   }
 );
 

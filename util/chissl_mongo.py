@@ -150,7 +150,7 @@ class ChisslMongo(object):
         
         return obj
     
-    def create_model(self, applicationName, model='default', query=None, project=None, labels={}, drop=False):
+    def create_model(self, applicationName, model='default', query=None, project=None, labels={}, transduction={}, drop=False):
         '''
         Creates a trained model by querying the corresponding collection and fitting
         the corresponding pipeline for the application. Clustering is also run and the
@@ -159,7 +159,7 @@ class ChisslMongo(object):
 
         # convert labels to tokens
         tokens = defaultdict(lambda : len(tokens))
-        token_labels = {k: tokens[v] for k, v in labels.items()}
+        token_labels = {k: tokens[v] for k, v in transduction.items()}
 
         if self.verbose:
             print(f'Finding application <{applicationName}>', end='...', flush=True)
@@ -189,8 +189,6 @@ class ChisslMongo(object):
             if len(X):
                 print(f'found {len(X)}...OK')
 
-                print('labels', len(labels), labels)
-
                 y = [token_labels.get(xi['_id'], -1) for xi in X]
                 index = [x['_id'] for x in X]
 
@@ -219,7 +217,8 @@ class ChisslMongo(object):
                    'parents': parents.tolist(),
                    'costs': costs.tolist(),
                    'instances': index,
-                   'X': X_transform.tolist()
+                   'X': X_transform.tolist(),
+                   'tokens': sorted(tokens, key=tokens.get),
                 }
 
                 if project and project != {}:
@@ -242,7 +241,6 @@ class ChisslMongo(object):
                     '_id': {'application': applicationName,
                             'model': model},
                     'labels': labels,
-                    'tokens': sorted(tokens, key=tokens.get),
                     'date': datetime.datetime.utcnow(),
                     'query': json.dumps(query, indent=2),
                     'project': json.dumps(project, indent=2),
@@ -296,6 +294,18 @@ class ChisslMongo(object):
                 .insert_one(obj)
             
             return pipeline
+
+    def update_labels(self, application, model, labels):
+        _id = {'application': application,
+               'model': model}
+
+        labels = {f'labels.{k}': v for k, v in labels.items()}
+
+        self.db.transduction_.find_one_and_update(
+            {'_id': _id},
+            {'$set': labels},
+            return_document=True
+        )
 
     def summarize_models(self, collection, application):
         return self.db[collection].aggregate([

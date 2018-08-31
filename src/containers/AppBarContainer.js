@@ -52,15 +52,17 @@ import MenuIcon from '@material-ui/icons/Menu';
 import SaveIcon from '@material-ui/icons/Save'
 import ImportExportIcon from '@material-ui/icons/ImportExport'
 import FolderIcon from '@material-ui/icons/Folder'
+import RefreshIcon from '@material-ui/icons/Refresh'
 
 import {
   createOpenApplicationsAction,
-  createOpenDatasetAction
+  createOpenDatasetAction,
 } from '../actions/ui'
 
 import {
   createUpdateDatasetAction,
-  createDeployModelAction
+  createUpdateLabelsAction,
+  createDeployModelAction,
 } from '../actions/api'
 
 import IconActionButtonContainer from './IconActionButtonContainer';
@@ -109,9 +111,16 @@ const AppBarComponent = ({classes, onClick}) =>
 
         <IconActionButtonContainer
           color='inherit'
-          action={createUpdateDatasetAction()}
+          action={createUpdateLabelsAction()}
         >
           <SaveIcon />
+        </IconActionButtonContainer>
+
+        <IconActionButtonContainer
+          color='inherit'
+          action={createUpdateDatasetAction()}
+        >
+          <RefreshIcon />
         </IconActionButtonContainer>
 
         <div style={{flex: 1}}/>

@@ -82,6 +82,13 @@ def start_app(app, mongo, **kwargs):
 
         return jsonify(obj)
 
+    @app.route('/api/applications/<application>/transduction/<model>/labels', methods=['POST'])
+    def update_labels(application, model):
+        labels = request.get_json() or {}
+        doc = chissl.update_labels(application, model, labels)
+        
+        return jsonify(doc.get('labels', {}))
+
     deployed = {}
 
     @app.route('/api/applications/<application>/induction/', methods=['POST', 'GET'])

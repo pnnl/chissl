@@ -46,6 +46,9 @@ const styles = theme => ({
   nested: {
     paddingLeft: theme.spacing.unit * 6,
   },
+  progress: {
+    margin: theme.spacing.unit * 2,
+  },
 });
 
 class ModelList extends React.Component {
@@ -80,7 +83,7 @@ class ModelList extends React.Component {
                       ? <Avatar className={classes.avatar}>
                           { formatAvatar(v.get('size')) }
                         </Avatar>
-                      : <CircularProgress />
+                      : <CircularProgress className={classes.progress}/>
                 }
 
                 <ListItemText

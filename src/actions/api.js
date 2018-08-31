@@ -1,6 +1,8 @@
 import {isKeyed, fromJS, Map, OrderedMap} from 'immutable'
 import {get, post} from 'axios'
 
+import {zip} from 'd3-array'
+
 import store from '../stores'
 
 import {createAction} from '.'
@@ -16,6 +18,8 @@ import {
 import {
   createCreateErrorAction
 } from '../actions/errors'
+
+import {getPredictions} from '../selectors'
 
 export const DEFAULT_PATH = ['api', 'recent'];
 export const CURRENT_MODEL_PATH = ['api', 'currentModel'];
@@ -77,19 +81,24 @@ export const createSetDatasetAction = (application, model) =>
       CURRENT_MODEL_PATH
     )(dispatch, getState);
 }
+
 export const createUpdateDatasetAction = () => (dispatch, getState) => {
   const state = getState();
   const {application, model} = getCurrentNames(state, CURRENT_MODEL_PATH);
-
+  const {instances, classes} = getPredictions(state)
   const path = getModelPath();
-  
+
+  // TOOD: don't use the entire transduction, filter based on borderline threshold
+  const transduction = Map(zip(instances, classes)).toJS();
+
   const labels = state.getIn([...path, 'labels'])
     .toJS();
 
   createMergeURLAction(
     post(
       `/api/applications/${application}/transduction/${model}`,
-      {labels}
+      {labels, transduction},
+      {timeout: 5*60*1000} // 5 minute timeout
     ).then(response => {
       console.log('Deleting old structure');
       
@@ -106,6 +115,25 @@ export const createUpdateDatasetAction = () => (dispatch, getState) => {
     CURRENT_MODEL_PATH
   )(dispatch, getState);
 };
+
+export const createUpdateLabelsAction = () => (dispatch, getState) => {
+  const state = getState();
+  const {application, model} = getCurrentNames(state, CURRENT_MODEL_PATH);
+
+  const path = getModelPath();
+  
+  const labels = state.getIn([...path, 'labels'])
+    .toJS();
+
+  createMergeURLAction(
+    post(
+      `/api/applications/${application}/transduction/${model}`,
+      {labels}
+    ),
+    CURRENT_MODEL_PATH
+  )(dispatch, getState);
+};
+
 
 export const createListApplicationsAction = () =>
   createMergeURLAction(get('/api/applications/'))
