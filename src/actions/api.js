@@ -71,7 +71,6 @@ export const getCurrentNames = (state, path=DEFAULT_PATH) => {
 export const getModelPath = (...args) =>
   [...store.getState().getIn(CURRENT_MODEL_PATH, []), ...args]
 
-
 export const getCurrentData = (state, path=DEFAULT_PATH) =>
   state.getIn(state.getIn(path, []), Map())
 
@@ -100,10 +99,12 @@ export const createUpdateDatasetAction = () => (dispatch, getState) => {
   const labels = state.getIn([...path, 'labels'])
     .toJS();
 
+  const colors = state.getIn([...path, 'colors'], {});
+
   createMergeURLAction(
     post(
       `/api/applications/${application}/transduction/${model}`,
-      {labels, transduction},
+      {labels, transduction, colors},
       {timeout: 5*60*1000} // 5 minute timeout
     ).then(response => {
       console.log('Deleting old structure');

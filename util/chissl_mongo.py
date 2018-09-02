@@ -150,7 +150,7 @@ class ChisslMongo(object):
         
         return obj
     
-    def create_model(self, applicationName, model='default', query=None, project=None, labels={}, transduction={}, drop=False):
+    def create_model(self, applicationName, model='default', query=None, project=None, labels={}, transduction={}, colors={}, drop=False):
         '''
         Creates a trained model by querying the corresponding collection and fitting
         the corresponding pipeline for the application. Clustering is also run and the
@@ -242,6 +242,7 @@ class ChisslMongo(object):
                     '_id': {'application': applicationName,
                             'model': model},
                     'labels': labels,
+                    'colors': colors,
                     'date': datetime.datetime.utcnow(),
                     'query': json.dumps(query, indent=2),
                     'project': json.dumps(project, indent=2),
@@ -296,17 +297,19 @@ class ChisslMongo(object):
             
             return pipeline
 
-    def update_labels(self, application, model, labels):
+    def update_field(self, application, model, data):
         _id = {'application': application,
                'model': model}
 
-        labels = {f'labels.{k}': v for k, v in labels.items()}
+        for field_key, field_values in data.items():
+            update = {f'{field_key}.{k}': v for k, v in field_values.items()}
 
-        self.db.transduction_.find_one_and_update(
-            {'_id': _id},
-            {'$set': labels},
-            return_document=True
-        )
+            print(update)
+
+            self.db.transduction_.find_one_and_update(
+                {'_id': _id},
+                {'$set': update}
+            )
 
     def summarize_models(self, collection, application):
         return self.db[collection].aggregate([
