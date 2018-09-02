@@ -1,7 +1,7 @@
-import {isKeyed, fromJS, Map, OrderedMap} from 'immutable'
+import {isKeyed, fromJS, Set, Map, OrderedMap} from 'immutable'
 import {get, post} from 'axios'
 
-import {zip} from 'd3-array'
+import {zip, merge} from 'd3-array'
 
 import store from '../stores'
 
@@ -19,7 +19,10 @@ import {
   createCreateErrorAction
 } from '../actions/errors'
 
-import {getPredictions} from '../selectors'
+import {
+  getPredictions,
+  getBorderlines
+} from '../selectors'
 
 export const DEFAULT_PATH = ['api', 'recent'];
 export const CURRENT_MODEL_PATH = ['api', 'currentModel'];
@@ -87,9 +90,12 @@ export const createUpdateDatasetAction = () => (dispatch, getState) => {
   const {application, model} = getCurrentNames(state, CURRENT_MODEL_PATH);
   const {instances, classes} = getPredictions(state)
   const path = getModelPath();
+  const borderlines = Set(merge(getBorderlines(state).values()));
 
-  // TOOD: don't use the entire transduction, filter based on borderline threshold
-  const transduction = Map(zip(instances, classes)).toJS();
+  const transduction = Map(
+    zip(instances, classes)
+      .filter(([i, c]) => c !== -1 && !borderlines.has(i))
+  ).toJS();
 
   const labels = state.getIn([...path, 'labels'])
     .toJS();
