@@ -12,6 +12,10 @@ import {
   createSetGroupColorAction
 } from '../actions/ui'
 
+import {
+  getModelPath
+} from '../actions/api'
+
 export const defaultColor = '#000000';
 
 // Adapted from example:
@@ -110,7 +114,7 @@ class ColorButton extends React.Component {
 
 export default connect(
   (state, {group}) => ({
-    color: state.getIn([...GROUP_COLOR_PATH, group])
+    color: state.getIn(getModelPath('colors', group))
   }),
   (dispatch, {group}) => ({
     onChange: value => dispatch(createSetGroupColorAction(group, value))

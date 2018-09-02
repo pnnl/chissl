@@ -40,6 +40,8 @@
 
 import {createAction} from '.';
 
+import {getModelPath} from './api'
+
 export const createOpenDatasetAction = () =>
   createAction({setIn: [['ui', 'datasetsOpenedByUser'], true]});
 
@@ -84,7 +86,7 @@ export const createSetActiveLearningStyle = value =>
 export const GROUP_COLOR_PATH = ['ui', 'groupColors'];
 
 export const createSetGroupColorAction = (group, color) =>
-  createAction({setIn: [[...GROUP_COLOR_PATH, group], color]})
+  createAction({setIn: [getModelPath('colors', group), color]})
 
 export const OPEN_APPLICATIONS_PATH = ['ui', 'openApplications'];
 
