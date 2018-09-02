@@ -59,7 +59,11 @@ import GroupColorButton from './GroupColorButton'
 
 import GroupFlowToolbar from './GroupFlowToolbar'
 
-import {getPredictions, getNestedDataFromLabels} from '../selectors';
+import {
+  getPredictions,
+  getNestedDataFromLabels,
+  getBorderlines
+} from '../selectors';
 
 import {
   createSetLabelAction,
@@ -89,22 +93,14 @@ const filterBorderlines = (values, dist, eps=1) => {
 }
 
 const BorderlinesContainer = connect(
-  () => createSelector(
-    [ getNestedDataFromLabels,
-      getPredictions,
-      state => getCurrentData(state, CURRENT_MODEL_PATH).get('instances', []),
-      (state, {group}) => group
-    ],
-    (data, {distances}, instances, group) => {
+  (state, {group}) => {
+    const borderlines = getBorderlines(state).get(group);
 
-      const values = filterBorderlines(merge([...data.get(group).values()]), i => distances[i]);
-
-      return {
-        value: instances[values[0]],
-        more: values.map(i => instances[i])
-      };
-    }
-  ),
+    return {
+      value: borderlines[0],
+      more: borderlines
+    };
+  },
   null,
   stateProps => stateProps
 )(InstanceContainer);

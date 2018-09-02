@@ -40,7 +40,7 @@
 
 import {createSelector} from 'reselect';
 import {List, Map, OrderedMap} from 'immutable';
-import {range} from 'd3-array';
+import {range, mean, deviation} from 'd3-array';
 import {nest} from 'd3-collection'
 
 import {getSubGroups, applyLabel} from '../dendrogram';
@@ -150,6 +150,31 @@ export const getPredictions = createSelector(
   }
 );
 
+const eps = 1;
+
+export const getBorderlines = createSelector(
+  [ getPredictions ],
+  ({distances, classes, instances}) => {
+    const dist = i => distances[i];
+
+    return Map(
+      nest()
+        .key(i => classes[i])
+        .rollup(leaves => {
+          const u = mean(leaves, dist);
+          const s = deviation(leaves, dist);
+
+          return leaves
+            .filter(i => dist(i) > u + eps*s)
+            .sort((i, j) => dist(j) - dist(i))
+            .map(i => instances[i]);
+        })
+        .entries(range(instances.length))
+        .map(({key, value}) => [key, value])
+    );
+  }
+)
+
 export const getNestedDataFromLabels = createSelector(
   [
     getDendrogram,
@@ -164,7 +189,7 @@ export const getNestedDataFromLabels = createSelector(
       .rollup(leaves =>
         leaves.sort((i, j) => depth[j] - depth[i])
       )
-      .map(range(instances.length));
+      .map(range(instances.length))
   }
 );
 
