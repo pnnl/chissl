@@ -9,8 +9,6 @@ import {
   getModelPath,
 } from './api.js'
 
-import {GROUP_COLOR_PATH} from './ui'
-
 export const createSetLabelAction = (k, v) =>
   createAction({setIn: [getModelPath('labels', k), v]});
 
@@ -52,7 +50,7 @@ export const createCreateGroupAction = keys => {
 
   return createAction(
     {mergeIn: [labels_path, newLabels]},
-    {mergeIn: [GROUP_COLOR_PATH, newColors]}
+    {mergeIn: [getModelPath('colors'), newColors]}
   );
 }
 
@@ -76,12 +74,12 @@ export const createRenameGroupAction = (oldName, newName) => {
   const labels = state.getIn(labels_path, OrderedMap())
     .map(v => v === oldName ? newName : v);
 
-  const color = state.getIn([...GROUP_COLOR_PATH, oldName]);
+  const color = state.getIn(getModelPath('colors', oldName));
 
   return createAction(
     {setIn: [labels_path, labels]},
-    {deleteIn: [[...GROUP_COLOR_PATH, oldName]]},
-    {setIn: [[...GROUP_COLOR_PATH, newName], color]},
+    {deleteIn: [getModelPath('colors', oldName)]},
+    {setIn: [getModelPath('colors', newName), color]},
   );
 }
 

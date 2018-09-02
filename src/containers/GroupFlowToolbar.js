@@ -13,7 +13,10 @@ import Toolbar from '@material-ui/core/Toolbar'
 import Tooltip from '@material-ui/core/Tooltip';
 
 import {
-  GROUP_COLOR_PATH,
+  getModelPath
+} from '../actions/api'
+
+import {
   createShowMoreAction
 } from '../actions/ui'
 
@@ -47,7 +50,7 @@ export const GroupFlowToolbar = ({group, direction, flow, colors=Map(), onClick}
 export default connect(
   (state, {group, direction}) => ({
     flow: prepareDataForScatter(state).flow[direction].get(group),
-    colors: state.getIn(GROUP_COLOR_PATH)
+    colors: state.getIn(getModelPath('colors'))
   }),
   dispatch => bindActionCreators({
     onClick: createShowMoreAction

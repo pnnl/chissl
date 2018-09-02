@@ -19,7 +19,6 @@ import {
 } from '../actions/api'
 
 import {
-  GROUP_COLOR_PATH,
   createShowMoreAction
 } from '../actions/ui'
 
@@ -110,9 +109,9 @@ const OverviewHexbinComponent = ({data=[], colors=Map(), onClick}) => {
 }
 
 export const OverviewHexbin = connect(
-  (state, {group}) => ({
+  state => ({
     ...prepareDataForScatter(state),
-    colors: state.getIn(GROUP_COLOR_PATH)
+    colors: state.getIn(getModelPath('colors'))
   }),
   dispatch => bindActionCreators({
     onClick: createShowMoreAction
