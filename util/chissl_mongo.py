@@ -297,19 +297,15 @@ class ChisslMongo(object):
             
             return pipeline
 
-    def update_field(self, application, model, data):
+    def patch_model(self, application, model, **data):
         _id = {'application': application,
                'model': model}
 
-        for field_key, field_values in data.items():
-            update = {f'{field_key}.{k}': v for k, v in field_values.items()}
-
-            print(update)
-
-            self.db.transduction_.find_one_and_update(
-                {'_id': _id},
-                {'$set': update}
-            )
+        return self.db.transduction_.find_one_and_update(
+            {'_id': _id},
+            {'$set': data},
+            return_document=True
+        )
 
     def summarize_models(self, collection, application):
         return self.db[collection].aggregate([

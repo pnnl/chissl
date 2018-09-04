@@ -1,5 +1,5 @@
 import {isKeyed, fromJS, Set, Map, OrderedMap} from 'immutable'
-import {get, post} from 'axios'
+import {get, post, patch} from 'axios'
 
 import {zip, merge} from 'd3-array'
 
@@ -102,7 +102,7 @@ export const createUpdateDatasetAction = () => (dispatch, getState) => {
   const colors = state.getIn([...path, 'colors'], {});
 
   createMergeURLAction(
-    post(
+    patch(
       `/api/applications/${application}/transduction/${model}`,
       {labels, transduction, colors},
       {timeout: 5*60*1000} // 5 minute timeout
@@ -132,15 +132,35 @@ export const createUpdateLabelsAction = () => (dispatch, getState) => {
   const labels = state.getIn([...path, 'labels'])
     .toJS();
 
+  const colors = state.getIn([...path, 'colors'], {});
+
   createMergeURLAction(
-    post(
+    patch(
       `/api/applications/${application}/transduction/${model}`,
-      {labels}
+      {labels, colors}
     ),
     CURRENT_MODEL_PATH
   )(dispatch, getState);
 };
 
+
+export const createUpdateModelFieldAction = (key, value) => (dispatch, getState) => {
+  const state = getState();
+  const {application, model} = getCurrentNames(state, CURRENT_MODEL_PATH);
+
+  const path = getModelPath();
+  
+  const labels = state.getIn([...path, 'labels'])
+    .toJS();
+
+  createMergeURLAction(
+    post(
+      `/api/applications/${application}/transduction/${model}/`,
+      {labels}
+    ),
+    CURRENT_MODEL_PATH
+  )(dispatch, getState);
+};
 
 export const createListApplicationsAction = () =>
   createMergeURLAction(get('/api/applications/'))

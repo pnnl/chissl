@@ -69,25 +69,21 @@ def start_app(app, mongo, **kwargs):
 
         return jsonify(as_dict(chissl.list_transduction_models(application)))
 
-    @app.route('/api/applications/<application>/transduction/<model>', methods=['GET', 'POST'])
+    @app.route('/api/applications/<application>/transduction/<model>', methods=['GET', 'PATCH'])
     def get_transduction_model(application, model):
 
-        if request.method == 'POST':
-            kwargs = request.get_json() or {}
-            obj = chissl.create_model(application, model, drop=True, **kwargs)
-        else:
+        if request.method == 'GET':
             obj = chissl.get_transduction_model(application, model)
+        elif request.method == 'PATCH':
+            data = request.get_json() or {}
+            if 'transduction' in data:
+                obj = chissl.create_model(application, model, drop=True, **data)
+            else:   
+                obj = chissl.patch_model(application, model, **data)
 
         obj['_id_computed'] = obj['pipeline'] = None
 
         return jsonify(obj)
-
-    @app.route('/api/applications/<application>/transduction/<model>/labels', methods=['POST'])
-    def update_labels(application, model):
-        labels = request.get_json() or {}
-        doc = chissl.update_labels(application, model, labels)
-        
-        return jsonify(doc.get('labels', {}))
 
     deployed = {}
 
