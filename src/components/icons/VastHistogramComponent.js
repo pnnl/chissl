@@ -1,13 +1,17 @@
 import React from 'react'
 
-import {VictoryScatter} from 'victory'
+import {
+  VictoryChart,
+  VictoryTooltip,
+  VictoryScatter
+} from 'victory'
 
 import ButtonBase from '@material-ui/core/ButtonBase'
 import Tooltip from '@material-ui/core/Tooltip'
 
 import {mean} from 'd3-array'
 import {nest} from 'd3-collection'
-import {scaleOrdinal, scaleLinear} from 'd3-scale'
+import {scaleOrdinal, scaleLinear, scaleLog} from 'd3-scale'
 import {schemeCategory10} from 'd3-scale-chromatic'
 
 import PopoverComponent from './PopoverComponent'
@@ -52,25 +56,33 @@ const Marker = ({color, size, title}) =>
 
 export const Trajectory = ({data, domain}) => {
   const aggregated_data = nest()
-    .key('name')
+    .key(d => d.name)
     .rollup(leaves => {
       return {
+        category: leaves[0].category,
         long: mean(leaves, d => d.long),
         lat: mean(leaves, d => d.lat),
         size: leaves.length
       }
-    });
+    })
+    .entries(data);
 
-  return <VictoryScatter
-    width={300}
-    height={300}
-    padding={5}
-    data={aggregated_data}
-    domain={domain}
-    x='long'
-    y='lat'
-    width={d => d.size}
-  />
+  aggregated_data.forEach(d => d.label = d.key);
+
+  return <VictoryChart>
+    <VictoryScatter
+      width={300}
+      height={300}
+      padding={5}
+      data={aggregated_data}
+      domain={domain}
+      x={d => d.value.long}
+      y={d => d.value.lat}
+      size={d => Math.log(d.value.size + 1)}
+      style={{data: {fill: d => color(d.value.category)}}}
+      labelComponent={<VictoryTooltip/>}
+    />
+  </VictoryChart>
 }
 const ActivityTimeHistogram = ({data=[], x, xDomain=[], y, yDomain=[]}) => {
   data = nest()
@@ -79,9 +91,9 @@ const ActivityTimeHistogram = ({data=[], x, xDomain=[], y, yDomain=[]}) => {
     .rollup(leaves => leaves.length)
     .map(data);
 
-  const scale = scaleLinear()
-    .domain([0, 120])
-    .range([0, diameter]);
+  const scale = scaleLog()
+    .domain([1, 120])
+    .range([3, diameter]);
 
   return <table style={{borderSpacing: 0}}>
     { yDomain.map(j =>

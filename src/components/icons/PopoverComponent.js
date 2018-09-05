@@ -83,7 +83,7 @@ class PopoverComponent extends Component {
           <Header {...this.props} onClick={this.handleClose}/>
 
           <div className='popover-content'>
-            { detail }
+            { open && detail /* todo: give this a delay with debounce */}
           </div>
           
         </Popover>
