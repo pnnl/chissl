@@ -3,18 +3,21 @@ import React from 'react'
 import {
   VictoryChart,
   VictoryTooltip,
-  VictoryScatter
+  VictoryScatter,
+  VictoryLine
 } from 'victory'
 
 import ButtonBase from '@material-ui/core/ButtonBase'
 import Tooltip from '@material-ui/core/Tooltip'
 
-import {mean} from 'd3-array'
+import {range, mean} from 'd3-array'
 import {nest} from 'd3-collection'
-import {scaleOrdinal, scaleLinear, scaleLog} from 'd3-scale'
+import {scaleOrdinal, scaleLinear, scaleLog, scaleSqrt} from 'd3-scale'
 import {schemeCategory10} from 'd3-scale-chromatic'
 
 import PopoverComponent from './PopoverComponent'
+
+import namedPlaces from './namedPlaces.json'
 
 const color = scaleOrdinal(schemeCategory10);
 
@@ -54,61 +57,77 @@ const Marker = ({color, size, title}) =>
       </Tooltip>
     : <div style={{minWidth: diameter, height: diameter}} />
 
-export const Trajectory = ({data, domain}) => {
-  const aggregated_data = nest()
-    .key(d => d.name)
-    .rollup(leaves => {
-      return {
-        category: leaves[0].category,
-        long: mean(leaves, d => d.long),
-        lat: mean(leaves, d => d.lat),
-        size: leaves.length
-      }
-    })
-    .entries(data);
+export const Trajectory = ({location, trajectory, domain}) => {
 
-  aggregated_data.forEach(d => d.label = d.key);
+  const sizeScale = scaleSqrt()
+    .domain([1, 120])
+    .range([1, 4]);
 
-  return <VictoryChart>
+  location.forEach(d => d.label = d[0]);
+
+  return <VictoryChart
+    domain={domain}
+  >
+    <VictoryLine
+      data={trajectory}
+      x={0}
+      y={1}
+      sortKey={(_, i) => i}
+    />
     <VictoryScatter
-      width={300}
-      height={300}
-      padding={5}
-      data={aggregated_data}
-      domain={domain}
-      x={d => d.value.long}
-      y={d => d.value.lat}
-      size={d => Math.log(d.value.size + 1)}
-      style={{data: {fill: d => color(d.value.category)}}}
+      data={location}
+      x={d => namedPlaces[d[0]].long}
+      y={d => namedPlaces[d[0]].lat}
+      size={d => sizeScale(d[1])}
+      style={{data: {fill: d => color(namedPlaces[d[0]].category)}}}
       labelComponent={<VictoryTooltip/>}
     />
   </VictoryChart>
 }
-const ActivityTimeHistogram = ({data=[], x, xDomain=[], y, yDomain=[]}) => {
-  data = nest()
-    .key(d => d[x])
-    .key(d => d[y])
-    .rollup(leaves => leaves.length)
-    .map(data);
 
-  const scale = scaleLog()
+const categories = [
+  'Apartment',
+  'Coffee',
+  'Dining',
+  'GASTech',
+  'Gas',
+  'Home',
+  'Industrial',
+  'Lodging',
+  'Public',
+  'Recreation',
+  'Shopping'
+]
+
+const ActivityTimeHistogram = ({hour_category, diameter=10}) => {
+  const width = diameter*12*2;
+  const height = diameter*categories.length*2;
+
+  const sizeScale = scaleLog()
     .domain([1, 120])
-    .range([3, diameter]);
+    .range([3, 0.9*diameter]);
 
-  return <table style={{borderSpacing: 0}}>
-    { yDomain.map(j =>
-        <tr key={j}>
-          { xDomain.map(i => {
-              const v = data.get(i) && data.get(i).get(j)
+  const yScale = scaleOrdinal()
+    .domain(categories)
+    .range(range(categories.length));
 
-              return <td key={i} style={outerStyle}>
-                <Marker size={scale(v)} color={color(j)} title={`${j}: ${v}`}/>
-              </td>
-            })
-          }
-        </tr>
-    )}
-  </table>
+  hour_category.forEach(d => d.label = `${d[0]} ${d[1]}: ${d[2]}`)
+
+  return <VictoryScatter
+    width={width}
+    height={height}
+    padding={diameter}
+    data={hour_category}
+    x={0}
+    y={d => yScale(d[1])}
+    size={d => sizeScale(d[2])}
+    style={{data: {strokeWidth: 0, fill: d => color(d[1])}}}
+    domain={{
+      y: [0, categories.length - 1],
+      x: [0, 11]
+    }}
+    labelComponent={<VictoryTooltip/>}    
+  />
 }
 
 export const VastHistogramComponent = ({CurrentEmploymentTitle, FullName, ...props}) =>
