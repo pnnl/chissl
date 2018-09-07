@@ -20,6 +20,9 @@ import {
   createShowMoreAction
 } from '../actions/ui'
 
+import {
+  unlabeledColor
+} from '../actions/labeling'
 
 export const GroupFlowToolbar = ({group, direction, flow, colors=Map(), onClick}) =>
   flow === undefined
@@ -37,7 +40,7 @@ export const GroupFlowToolbar = ({group, direction, flow, colors=Map(), onClick}
                   size='small'
                   variant={key === '-1' ? 'outlined' : 'contained'}
                   onClick={() => onClick && onClick(value)}
-                  style={{backgroundColor: colors.get(key)}}
+                  style={{backgroundColor: colors.get(key, unlabeledColor)}}
                 >
                   {value.length}
                 </Button>
