@@ -54,6 +54,8 @@ import {PaginationContainer} from './SimpleContainers';
 
 import {createHideMoreAction, createSetPageAction} from '../actions/ui.js';
 
+import {OverviewHexbin} from './GroupHexbin'
+
 const MoreDrawerComponent = ({values, page, itemsPerPage, onClose, onRequestMore, ...rest}) =>
   <Drawer
     open={values && values.length > 0}
@@ -79,6 +81,7 @@ const MoreDrawerComponent = ({values, page, itemsPerPage, onClose, onRequestMore
     </Toolbar>
 
     <Paper style={{width: 500, overflowY: 'scroll'}}>
+      <OverviewHexbin subset={values} />
       { values.slice(itemsPerPage*page, itemsPerPage*(page + 1)).map(d =>
           <InstanceContainer key={d} value={d} />
         )

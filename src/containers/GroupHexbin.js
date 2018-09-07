@@ -2,7 +2,7 @@ import React from 'react'
 import {bindActionCreators} from 'redux'
 import {connect} from 'react-redux'
 import {createSelector} from 'reselect'
-import {Map} from 'immutable'
+import {Set, Map} from 'immutable'
 
 import ContainerDimensions from 'react-container-dimensions'
 
@@ -75,7 +75,17 @@ const HexbinBase = ({data=[], ...props}) =>
     }
   </ContainerDimensions>
 
-const getBinSummary = data => {
+const getBinSummary = (data, subset=[]) => {
+  subset = Set(subset);
+
+  if (subset.size > 0) {
+    data = data.filter(d => subset.has(d._id));
+  }
+
+  if (data.length === 0) {
+    return {key: -1, value: 0};
+  }
+  
   const counts = nest()
     .key(d => d.group)
     .rollup(leaves => leaves.length)
@@ -87,9 +97,9 @@ const getBinSummary = data => {
   return {key, value: value/total};
 }
 
-const OverviewHexbinComponent = ({data=[], colors=Map(), onClick}) => {
+const OverviewHexbinComponent = ({data=[], colors=Map(), subset, onClick}) => {
   const getStyles = d => {
-    const {key, value} = getBinSummary(d);
+    const {key, value} = getBinSummary(d, subset);
 
     return {
       onClick: () => onClick(d.map(({_id}) => _id)),
