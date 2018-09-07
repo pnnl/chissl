@@ -19,8 +19,12 @@ import {
 } from '../actions/api'
 
 import {
-  createShowMoreAction
+  createShowMoreAction,
 } from '../actions/ui'
+
+import {
+  unlabeledColor
+} from '../actions/labeling'
 
 import Chart, {HexbinPlot, ScatterPlot} from '../charts'
 
@@ -104,7 +108,7 @@ const OverviewHexbinComponent = ({data=[], colors=Map(), subset, onClick}) => {
     return {
       onClick: () => onClick(d.map(({_id}) => _id)),
       style: {
-        fill: colors.get(key, 'white'),
+        fill: colors.get(key, unlabeledColor),
         fillOpacity: value
       }
     };

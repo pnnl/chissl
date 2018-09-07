@@ -9,6 +9,8 @@ import {
   getModelPath,
 } from './api.js'
 
+export const unlabeledColor = 'lightgray'
+
 export const createSetLabelAction = (k, v) =>
   createAction({setIn: [getModelPath('labels', k), v]});
 
