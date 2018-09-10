@@ -237,7 +237,7 @@ const InstanceTableContainer = ({data, labels=OrderedMap(), histogram, ...rest})
 
   return labels.size === 0
     ? <div/>
-    : <Card className='instance-table'>
+    : <Card style={{overflow: 'visible'}}>
       <CardContent>
         <Grid container padding={16}>
 
