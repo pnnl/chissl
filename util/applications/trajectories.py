@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 
 from sklearn.pipeline import Pipeline
-from sklearn.base import TransformerMixin
+from sklearn.base import TransformerMixin, BaseEstimator
 from sklearn.preprocessing import Normalizer, StandardScaler
 from sklearn.decomposition import NMF
 
@@ -19,11 +19,24 @@ def distance_geom(df, n=20, **kwargs):
     xi = pdist(func(np.linspace(0, 1, n)).T)
     return xi/xi.max()
 
-class TrackometryTransformer(TransformerMixin):
-    def __init__(self, n_components=20, coordinates='coordinates', timestamps='timestamps'):
+class TrackometryTransformer(TransformerMixin, BaseEstimator):
+    def __init__(self, n_components=20, coordinates='coordinates', timestamps='timestamps', start=None, end=None):
         self.coordinates = coordinates
         self.timestamps = timestamps
         self.n_components = n_components
+        self.start = start
+        self.end = end
+
+    def get_params(self, deep=False):
+      return dict(coordinates=self.coordinates,
+                  timestamps=self.timestamps,
+                  n_components=self.n_components,
+                  start=self.start,
+                  end=self.end)
+
+    def set_params(self, **kwargs):
+      self.__init__(**kwargs)
+      return self
         
     def fit(self, X, y=None):
         return self
@@ -34,7 +47,8 @@ class TrackometryTransformer(TransformerMixin):
     def distance_geom(self, doc):
 
         df = pd.DataFrame(doc[self.coordinates],
-                          index=pd.DatetimeIndex(doc[self.timestamps]))
+                          index=pd.DatetimeIndex(doc[self.timestamps]))\
+          .iloc[self.start:self.end]
 
         t = (df.index - df.index[0]).total_seconds()
         t = t/t[-1]
