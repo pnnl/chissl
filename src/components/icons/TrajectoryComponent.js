@@ -7,7 +7,8 @@ export const TrajectoryComponent = ({coordinates, start, end}) =>
     width={75}
     height={75}
     padding={5}
-    data={coordinates.slice(-50)}
+    data={coordinates.slice(-10)}
     x={0}
     y={1}
+    sortKey={(_, i) => i}
   />
