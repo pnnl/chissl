@@ -5,7 +5,7 @@ from io import BytesIO
 
 def img2base64(img, format='png'):
     buffered = BytesIO()
-    img.save(buffered, format="JPEG")
+    img.save(buffered, format=format)
 
     return {
         'type': f'image/{format}',
