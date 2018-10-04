@@ -12,7 +12,7 @@ Clicking below instances will show more instances on the sidebar that are simila
 
 
 # Getting Started
-
+## Dependencies
 Install MongoDB. For example, on MacOS the easiest way to do this is with [Homebrew](https://brew.sh), by running the following command.
 
 ```bash
@@ -25,128 +25,97 @@ Install a [python 3.5 environment](https://www.anaconda.com/download/) with the 
 * flask
 * scikit-learn
 * pandas
+* umap-learn
+
+Install the chissl package
+```bash
+cd python-chissl
+python setup.py install
+```
+
+If you plan to modify the chissl python source code, you may find it convenient to instead install the package with `develop`, which creates symbolic links back to the files in chissl-python, allowing changes to be reflected without re-installing the package. To do so:
+```python
+cd python-chissl
+python setup.py develop
+```
+
+Note: umap-learn is best installed using the following command
+```bash
+conda install -c conda-forge umap-learn
+```
 
 Install the [node.js](https://nodejs.org/en/) dependencies
-
 ```bash
+cd react-chissl
 npm install
 ```
 
+## Startup
 Start the development server
-
 ```bash
+cd react-chissl
 npm start
-```
-
-Restore the JSON data to the database
-
-```bash
-python restore.py
 ```
 
 Go to [localhost:3000](http://localhost:3000)
 
-
-# Adding Datasets
-
-Adding a completely new dataset requires touching the project in the several places. You will need to determine the following three things:
-* How to store your data in the database, e.g. **MyNewDataset**
-* How to represent your data as a dendrogram, e.g. **MyNewClustering**
-* How to represent your data visually, e.g. **MyNewComponent**
-
-What, you thought this would be easy?
-
-## Back End
-* mongodb://chissl_MyNewDataset.instances
-* clusters/MyNewClustering.json
-
-Put your data in a Mongo database. This part is pretty flexible, each document in the database should hold whatever information is needed to render an instance on the client side. This data will eventually be passed directly to the **MyNewComponent** as props. An example document is shown below:
-
-```json
-{
-  "tags": [
-    "Home",
-    "Coffee",
-    "GASTech",
-    "Dining",
-    "1",
-    "Monday",
-    "Alcazar",
-    "Lucas",
-    "Information Technology",
-    "IT Helpdesk"
-  ],
-  "_id": "1-14-01-06",
-  "places": {
-    "8": "GASTech",
-    "14": "GASTech",
-    "19": "Home",
-    "15": "GASTech",
-    "22": "GASTech",
-    "12": "Dining",
-    "9": "GASTech",
-    "7": "Coffee",
-    "21": "Home",
-    "20": "Home",
-    "17": "GASTech",
-    "11": "GASTech",
-    "13": "GASTech",
-    "18": "Home",
-    "23": "GASTech",
-    "16": "GASTech",
-    "10": "GASTech"
-  },
-  "date": "2014-01-06 00:00:00",
-  "name": "Alcazar, Lucas"
-}
+To run in `production` mode, you should build the web assets using
+```bash
+npm run build
 ```
 
-If you want your data to be query-able, use the `tags` field to store any keywords strings relevant to the document. You will want to add `tags` as an index to the database, e.g.:
+The API server can be started using
+```bash
+python -m chissl.server --port=9876
+```
+
+The front end server can be started using
+```bash
+cd react-chissl
+node server.js 3000 http://localhost:9876
+```
+
+Note: the ports used for the API and front end servers are arbitrary, but the API port should be passed to the front end server so it can proxy the data correctly.
+
+
+# Adding Applications
+The CHISSL back-end has the following important concepts:
+* Applications
+* Collections
+* Components
+* Pipelines
+* Models
+
+## Back-End
+An application is the association of a collection, component, and a pipeline. A model is a specific instantiation of a pipeline that has been fit on some existing data (from a collection).
+
+First, add your data to a collection. Let's assume our data is stored as a list of python dictionaries called `docs.` See `python-chissl/applications/Digits.ipynb` for the code to generate the docs array. CHISSL has a convenience function that calls the pymongo insert_many function. Data can be inserted using this as follows:
 
 ```python
-client = MongoClient('mongodb://<your database URL>')
-client.chissl_MyNewDataset.instances.create_index('tags')
+from chissl.util import chissl_mongo as cm
+chissl = cm.ChisslMongo(verbose=True)
+chissl.create_collection('Digits-data', docs, drop=True)
 ```
 
-Represent your dendrogram as a JSON object containing a parent pointer array. The JSON object tells which database to connect to as well as what the parents, costs, and dates associated for each instance are. Clustering implementations and convenience functions are found in `/util/cluster`. A portion of an example cluster object is shown below.
+This creates a collection called 'Digits-app'. Next we will create an application that associates the digits data with the application we are creating. It also points to the visualization component (ImageComponent) and pipeline (SimplePipeline) we are using for this application.
 
-```json
-{
-  "db": "chissl_VAST",
-  "parents": [
-    922,
-    747,
-    573,
-    551,
-    849,
-    ...
-  ],
-  "instances": [
-    "1-14-01-06",
-    "1-14-01-07",
-    "1-14-01-08",
-    "1-14-01-09",
-    "1-14-01-10",
-    ...
-  ],
-  "costs": [
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    0.0,
-    ...
-  ],
-  "dates": [
-    "2014-01-06 00:00:00",
-    "2014-01-07 00:00:00",
-    "2014-01-08 00:00:00",
-    "2014-01-09 00:00:00",
-    "2014-01-10 00:00:00",
-    ...
-  ]
-}
+```python
+chissl.create_application('Digits-app',
+                          'Digits-data',
+                          'ImageComponent',
+                          'chissl.pipelines.mnist.SimplePipeline',
+                          drop=True)
 ```
+
+Note: pipelines are scikit-learn pipline objects. They can be imported from anywhere. For example, relative to where you run `python -m chissl.server`.
+
+A new model can be via the user interface, or programmatically. To create a model for this dataset, do the following:
+```python
+chissl.create_model('Digits-app', 'test', drop=True)
+```
+
+This returns some useful information, including a 2-D projection of each document in `docs`.
+
 
 ## Front End
 * src/components/icons/MyNewComponent.js
@@ -181,10 +150,9 @@ If you want to use CSS, create `MyNewComponent.scss` namespaced as shown below. 
 }
 ```
 
-Export your component in `src/components/icons/index.js`. The component should be exported as the database name so CHISSL knows what component to use to render data coming from a particular source.
+Export your component in `src/components/icons/index.js`.
 
 ```js
-export {MyNewComponent as myComponentsDatabaseName} from './MyNewComponent';
+export {MyNewComponent} from './MyNewComponent';
 ```
 
-OK, if you got this far I guess it wasn't impossible.
