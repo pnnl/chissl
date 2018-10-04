@@ -36,7 +36,7 @@
   },
   "scripts": {
     "start-serve": "node server.js 3005 http://localhost:9101",
-    "start-api": "python server.py --debug --port=9101",
+    "start-api": "python -m chissl.server --port=9101",
     "start-js": "react-scripts start",
     "start": "npm-run-all -p watch-css start-js start-api",
     "serve": "npm-run-all -p start-api start-serve",

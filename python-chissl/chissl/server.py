@@ -37,7 +37,7 @@
 
 import os, json
 from flask import Flask, jsonify, request
-from chissl import chissl_mongo as cm
+from .util import chissl_mongo as cm
 
 from functools import lru_cache
 
