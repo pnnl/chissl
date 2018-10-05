@@ -73,7 +73,8 @@ class TrackometryTransformer(TransformerMixin, BaseEstimator):
         t_small = np.linspace(0, 1, self.n_components)
 
         xi = pdist(np.vstack([f(t_small) for f in F]).T)
-        return xi/xi.max()
+
+        return xi/(xi.max() or 1)
 
 pipeline = Pipeline([
   ('geom', TrackometryTransformer()),
