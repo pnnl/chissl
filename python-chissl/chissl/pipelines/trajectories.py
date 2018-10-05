@@ -20,9 +20,17 @@ def distance_geom(df, n=20, **kwargs):
     return xi/xi.max()
 
 class TrackometryTransformer(TransformerMixin, BaseEstimator):
-    def __init__(self, n_components=20, coordinates='coordinates', timestamps='timestamps', start=None, end=None):
+    def __init__(self,
+                 n_components=20,
+                 coordinates='coordinates',
+                 timestamps=None,
+                 seconds=None,
+                 start=None,
+                 end=None
+    ):
         self.coordinates = coordinates
         self.timestamps = timestamps
+        self.seconds = seconds
         self.n_components = n_components
         self.start = start
         self.end = end
@@ -30,6 +38,7 @@ class TrackometryTransformer(TransformerMixin, BaseEstimator):
     def get_params(self, deep=False):
       return dict(coordinates=self.coordinates,
                   timestamps=self.timestamps,
+                  seconds=self.seconds,
                   n_components=self.n_components,
                   start=self.start,
                   end=self.end)
@@ -46,15 +55,20 @@ class TrackometryTransformer(TransformerMixin, BaseEstimator):
 
     def distance_geom(self, doc):
 
-        df = pd.DataFrame(doc[self.coordinates],
-                          index=pd.DatetimeIndex(doc[self.timestamps]))\
-          .iloc[self.start:self.end]
+        if self.timestamps:
+          index = pd.DatetimeIndex(doc[self.timestamps])
+          t = (index - index[0]).total_seconds()
+        elif self.seconds:
+          t = np.array(doc[self.seconds])
+        else:
+          t = np.arange(len(doc))
 
-        t = (df.index - df.index[0]).total_seconds()
         t = t/t[-1]
 
+        values = np.array(doc[self.coordinates])
+ 
         F = [interp1d(t, values, kind='linear')
-             for values in df.values.T]
+             for values in values.T]
 
         t_small = np.linspace(0, 1, self.n_components)
 
