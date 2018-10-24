@@ -136,6 +136,8 @@ export const createUpdateDatasetAction = () => (dispatch, getState) => {
       .filter(([i, c]) => c !== -1 && !borderlines.has(i))
   ).toJS();
 
+  const query = state.getIn([...path, 'query'])
+
   const labels = state.getIn([...path, 'labels'])
     .toJS();
 
@@ -144,7 +146,7 @@ export const createUpdateDatasetAction = () => (dispatch, getState) => {
   createMergeURLAction(
     patch(
       `/api/applications/${application}/transduction/${model}`,
-      {labels, transduction, colors},
+      {labels, transduction, colors, query},
       {timeout: 5*60*1000} // 5 minute timeout
     ).then(response => {
       console.log('Deleting old structure');
