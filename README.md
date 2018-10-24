@@ -156,3 +156,8 @@ Export your component in `src/components/icons/index.js`.
 export {MyNewComponent} from './MyNewComponent';
 ```
 
+# Restoring Bundled Data
+Some applications and data is bundled with CHISSL to make getting started easier. This can be restored to the MongoDB as follows:
+```bash
+mongorestore --gzip --archive=dumps/chissl
+```
