@@ -63,7 +63,8 @@ class TrackometryTransformer(TransformerMixin, BaseEstimator):
                  timestamps=None,
                  seconds=None,
                  start=None,
-                 end=None
+                 end=None,
+                 noise=0
     ):
         self.coordinates = coordinates
         self.timestamps = timestamps
@@ -71,6 +72,7 @@ class TrackometryTransformer(TransformerMixin, BaseEstimator):
         self.n_components = n_components
         self.start = start
         self.end = end
+        self.noise = noise
 
     def get_params(self, deep=False):
       return dict(coordinates=self.coordinates,
@@ -78,7 +80,8 @@ class TrackometryTransformer(TransformerMixin, BaseEstimator):
                   seconds=self.seconds,
                   n_components=self.n_components,
                   start=self.start,
-                  end=self.end)
+                  end=self.end,
+                  noise=self.noise)
 
     def set_params(self, **kwargs):
       self.__init__(**kwargs)
@@ -93,29 +96,27 @@ class TrackometryTransformer(TransformerMixin, BaseEstimator):
     def distance_geom(self, doc):
 
         if self.timestamps:
-          index = pd.DatetimeIndex(doc[self.timestamps])
-          t = (index - index[0]).total_seconds()
+            index = pd.DatetimeIndex(doc[self.timestamps])
+            t = (index - index[0]).total_seconds()
         elif self.seconds:
-          t = np.array(doc[self.seconds])
+            t = np.array(doc[self.seconds])
         else:
-          t = np.arange(len(doc))
+            t = np.arange(len(doc))
 
-        t = t/t[-1]
-
+        t = (t - t[0])/(t[-1] - t[0])
         values = np.array(doc[self.coordinates])
- 
-        F = [interp1d(t, values, kind='linear')
-             for values in values.T]
+
+        F = [interp1d(t, v, kind='linear')
+             for v in values.T]
 
         t_small = np.linspace(0, 1, self.n_components)
 
         xi = pdist(np.vstack([f(t_small) for f in F]).T)
-
         return xi/(xi.max() or 1)
 
 pipeline = Pipeline([
   ('geom', TrackometryTransformer()),
-  # ('nmf', NMF(n_components=50)),
+  ('nmf', NMF(n_components=50)),
   ('norm', StandardScaler()),
   # ('norm', Normalizer('l1')),
 ])
