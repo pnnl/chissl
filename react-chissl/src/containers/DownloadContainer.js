@@ -47,15 +47,19 @@ import FileDownloadIcon from '@material-ui/icons/CloudDownload';
 
 import {getPredictions} from '../selectors';
 
+import {
+  getCurrentNames,
+  CURRENT_MODEL_PATH
+} from '../actions/api'
+
 class DownloadComponent extends Component {
   handleClicked = () => {
-    const {classes, distances, instances, groupNames} = this.props;
+    const {classes, distances, instances} = this.props;
 
     const payload = instances
-      .map((d, i) => {
-        const ci = String(classes[i]);
-        return `${d},${groupNames.get(ci, ci)},${distances[i]}`
-      })
+      .map((d, i) =>
+        `${d},${classes[i]},${distances[i]}`
+      )
       .join('\n');
 
     const header = 'id,label,distance';
@@ -67,14 +71,14 @@ class DownloadComponent extends Component {
   }
 
   render() {
-    const {currentDataset} = this.props;
+    const {model} = this.props;
 
     return (
       <IconButton color='inherit' onClick={this.handleClicked}>
         <FileDownloadIcon />
         <a
           ref={link => this.link = link}
-          download={`${currentDataset}.csv`}
+          download={`${model}.csv`}
         />
       </IconButton>
     );
@@ -84,8 +88,6 @@ class DownloadComponent extends Component {
 export default connect(
   state => ({
     ...getPredictions(state),
-    instances: state.getIn(['data', 'instances']),
-    currentDataset: state.getIn(['ui', 'currentDataset']),
-    groupNames: state.getIn(['ui', 'groupNames'], Map())
+    ...getCurrentNames(state, CURRENT_MODEL_PATH)
   })
 )(DownloadComponent);
