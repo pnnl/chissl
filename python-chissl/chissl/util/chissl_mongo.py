@@ -96,6 +96,11 @@ def cluster(X, **kwargs):
 
     return parents, get_cost(X, children)
 
+def from_str(s):
+    if type(s) is str:
+        return json.loads(s) or {}
+    return s
+
 class ChisslMongo(object):
     def __init__(self, url=None, db='chissl', verbose=False):
         self.verbose = verbose
@@ -157,6 +162,10 @@ class ChisslMongo(object):
         resulting dendrogram and fitted is stored in the _models collection.
         '''
 
+        query = from_str(query)
+        project = from_str(project)
+
+
         # convert labels to tokens
         tokens = defaultdict(lambda : len(tokens))
         token_labels = {k: tokens[v] for k, v in transduction.items()}
@@ -182,7 +191,7 @@ class ChisslMongo(object):
 
             if self.verbose:
                 print(f'OK\nQuerying collection <{collectionName}> <{query}>', end='...', flush=True)
-            
+
             X = list(collection.find(query or {}))
 
 
