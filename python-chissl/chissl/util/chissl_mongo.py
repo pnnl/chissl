@@ -98,7 +98,10 @@ def cluster(X, **kwargs):
 
 def from_str(s):
     if type(s) is str:
-        return json.loads(s) or {}
+        if s == '':
+            return {}
+        else:
+            return json.loads(s) or {}
     return s
 
 class ChisslMongo(object):
