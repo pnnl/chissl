@@ -46,16 +46,6 @@ from sklearn.decomposition import NMF
 from scipy.spatial.distance import pdist
 from scipy.interpolate import interp1d
 
-from umap import UMAP
-
-def distance_geom(df, n=20, **kwargs):
-    t = (df.index - df.index[0]).total_seconds()
-    
-    func = interp1d(t/t[-1], df.values.T, **kwargs)
-
-    xi = pdist(func(np.linspace(0, 1, n)).T)
-    return xi/xi.max()
-
 class TrackometryTransformer(TransformerMixin, BaseEstimator):
     def __init__(self,
                  n_components=20,
@@ -86,14 +76,14 @@ class TrackometryTransformer(TransformerMixin, BaseEstimator):
     def set_params(self, **kwargs):
       self.__init__(**kwargs)
       return self
-        
+
     def fit(self, X, y=None):
         return self
         
     def transform(self, X):
-        return np.vstack(map(self.distance_geom, X))
+        return [self.extract(xi) for xi in X]
 
-    def distance_geom(self, doc):
+    def extract(self, doc):
 
         if self.timestamps:
             index = pd.DatetimeIndex(doc[self.timestamps])
@@ -111,12 +101,43 @@ class TrackometryTransformer(TransformerMixin, BaseEstimator):
 
         t_small = np.linspace(0, 1, self.n_components)
 
-        xi = pdist(np.vstack([f(t_small) for f in F]).T)
-        return xi/(xi.max() or 1)
+        return np.vstack([f(t_small) for f in F]).T
+
+
+class DistanceGeometry(TransformerMixin, BaseEstimator):
+    def __init__(self, metric='euclidean', p=None, w=None, V=None, VI=None):
+        self.metric = metric
+        self.p = p
+        self.w = w
+        self.V = V
+        self.VI = VI
+
+    def get_params(self, deep=False):
+        return dict(
+            metric=self.metric,
+            p=self.p,
+            w=self.w,
+            V=self.V,
+            VI=self.VI
+        )
+
+    def set_params(self, **kwargs):
+        return self.__init__(**kwargs)
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        kwargs = self.get_params()
+
+        def distance(xi):
+            d = pdist(xi, **kwargs)
+            return d/d.max()
+
+        return np.vstack([distance(xi) for xi in X])
+
 
 pipeline = Pipeline([
-  ('geom', TrackometryTransformer()),
-  ('nmf', NMF(n_components=50)),
-  ('norm', StandardScaler()),
-  # ('norm', Normalizer('l1')),
+    ('extract', TrackometryTransformer()),
+    ('geom', DistanceGeometry()),
 ])
