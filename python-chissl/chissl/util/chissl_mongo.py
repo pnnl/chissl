@@ -242,9 +242,11 @@ class ChisslMongo(object):
                         {'$project': project}
                     ])
 
-                    obj_computed['hist'] = pd.DataFrame(list(data))\
+                    df = pd.DataFrame(list(data))\
                         .set_index('_id')\
-                        .loc[index]\
+                        .loc[index]
+
+                    obj_computed['hist'] = df.fillna(df.median(axis=0))\
                         .to_dict(orient='list')
 
                     if self.verbose:
