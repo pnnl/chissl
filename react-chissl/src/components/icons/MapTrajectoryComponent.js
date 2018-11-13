@@ -19,16 +19,22 @@ const pathStyle = {
   strokeWidth: 1
 }
 
-const MapTrajectoryComponent = ({coordinates}) => {
-  const features = {
+const MapTrajectoryComponent = ({_id, coordinates}) => {
+  const line = {
+    type: 'Feature',
+    geometry: {type: 'MultiPoint', coordinates}
+  };
+
+  const points = {
     type: 'Feature',
     geometry: {type: 'LineString', coordinates}
   };
 
   const projection = geoEqualEarth()
-    .fitSize([width, height], features);
+    .fitSize([width, height], points);
 
   const path = geoPath()
+    .pointRadius(1)
     .projection(projection);
 
   return <div style={{margin: 10}}>
@@ -52,7 +58,12 @@ const MapTrajectoryComponent = ({coordinates}) => {
 
       <path
         style={pathStyle}
-        d={path(features)}
+        d={path(line)}
+      />
+
+      <path
+        style={pathStyle}
+        d={path(points)}
       />
     </svg>
   </div>
