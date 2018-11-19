@@ -89,7 +89,7 @@ The CHISSL back-end has the following important concepts:
 ## Back-End
 An application is the association of a collection, component, and a pipeline. A model is a specific instantiation of a pipeline that has been fit on some existing data (from a collection).
 
-First, add your data to a collection. Let's assume our data is stored as a list of python dictionaries called `docs.` See `python-chissl/applications/Digits.ipynb` for the code to generate the docs array. CHISSL has a convenience function that calls the pymongo insert_many function. Data can be inserted using this as follows:
+First, add your data to a collection. Let's assume our data is stored as a list of python dictionaries called `docs.` See `/chissl/applications/Digits.ipynb` for the code to generate the docs array. CHISSL has a convenience function that calls the pymongo insert_many function. Data can be inserted using this as follows:
 
 ```python
 from chissl.util import chissl_mongo as cm
