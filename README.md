@@ -19,29 +19,26 @@ Install MongoDB. For example, on MacOS the easiest way to do this is with [Homeb
 brew install mongodb
 ```
 
-Install a [python 3.5 environment](https://www.anaconda.com/download/) with the following packages
-* pymongo
-    * if using Anaconda, this is the only additional dependency (use **conda install pymongo**)
-* flask
-* scikit-learn
-* pandas
-* umap-learn
+For other platforms, see the [MongoDB installation guide](https://docs.mongodb.com/manual/installation/).
 
-Install the chissl package
+Create a python 3.5^ environment. The recommended installation procedure is to use [Anaconda](https://www.anaconda.com/download/) to create a basic environment, then install the chissl package using pip.
+
 ```bash
+conda create -n chissl scipy pandas scikit-learn matplotlib
+conda activate chissl
 cd python-chissl
-python setup.py install
+pip install .
 ```
 
-If you plan to modify the chissl python source code, you may find it convenient to instead install the package with `develop`, which creates symbolic links back to the files in chissl-python, allowing changes to be reflected without re-installing the package. To do so:
-```python
-cd python-chissl
-python setup.py develop
+If you plan to modify the chissl python source code, you may find it convenient to instead install the package with `develop`, which creates symbolic links back to the files in python-chissl, allowing changes to be reflected without re-installing the package. The last step is instead:
+```bash
+pip install -e .
 ```
 
-Note: umap-learn is best installed using the following command
+Hint: Use Node Version Manager to install local user copies of node, avoiding pesky permission problems.
 ```bash
-conda install -c conda-forge umap-learn
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash
+nvm install node
 ```
 
 Install the [node.js](https://nodejs.org/en/) dependencies
