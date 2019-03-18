@@ -158,3 +158,18 @@ Some applications and data is bundled with CHISSL to make getting started easier
 ```bash
 mongorestore --gzip --archive=dumps/chissl
 ```
+
+# How to Cite
+If you this work inspires your research, please cite the following paper:
+
+[Arendt, Dustin, et al. "Towards rapid interactive machine learning: evaluating tradeoffs of classification without representation." Proceedings of the 24th International Conference on Intelligent User Interfaces. ACM, 2019.](https://dl.acm.org/citation.cfm?id=3301275.3302280)
+```
+@inproceedings{arendt2019towards,
+  title={Towards rapid interactive machine learning: evaluating tradeoffs of classification without representation},
+  author={Arendt, Dustin and Saldanha, Emily and Wesslen, Ryan and Volkova, Svitlana and Dou, Wenwen},
+  booktitle={Proceedings of the 24th International Conference on Intelligent User Interfaces},
+  pages={591--602},
+  year={2019},
+  organization={ACM}
+}
+```
