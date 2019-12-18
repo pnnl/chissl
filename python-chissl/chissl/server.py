@@ -35,9 +35,21 @@
 #      OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 #      DAMAGE.
 
-import os, json
+import os, json, sys
 from flask import Flask, jsonify, request
-from .util import chissl_mongo as cm
+
+#sys.path.insert(0, 'util')
+# import importlib
+# module = importlib.load_module('folder.filename')
+# module.function()
+
+
+if __package__ is None or __package__ == '':
+    # uses current directory visibility
+    import chissl_mongo as cm
+else:
+    # uses current package visibility
+    from . import chissl_mongo as cm
 
 from functools import lru_cache
 
