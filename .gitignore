@@ -5,14 +5,12 @@ build/
 *.py[cod]
 node_modules/
 
-# Compiled javascript
-chissl/static/
-
 # OS X
 .DS_Store
-widget/chissl/static
+
+# JavaScript
 es
+lib
 
 # notebook data
 notebooks/**/data
-lib
