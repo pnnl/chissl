@@ -140,6 +140,12 @@ setup_args = {
     ],
     'install_requires': [
         'ipywidgets>=7.0.0',
+        'matplotlib>=3.3.0',
+        'numpy>=1.19.0',
+        'pandas>=1.1.0',
+        'scipy>=1.5.0',
+        'sklearn>=0.23.0',
+        'umap>=0.4.6'
     ],
     'packages': find_packages(),
     'zip_safe': False,
@@ -152,7 +158,7 @@ setup_args = {
 
     'author': 'Dustin Arendt',
     'author_email': 'dustin.arendt@pnnl.gov',
-    'url': 'https://github.com/PNNL/chissl-widget',
+    'url': 'https://github.com/PNNL/chissl',
     'keywords': [
         'ipython',
         'jupyter',
