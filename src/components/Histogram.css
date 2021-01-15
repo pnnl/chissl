@@ -1,0 +1,10 @@
+.histogram-chart .axis text {
+  alignment-baseline: middle; }
+
+.histogram-chart .axis text:last-child {
+  text-anchor: end; }
+
+.histogram-chart .axis path {
+  stroke: black;
+  stroke-width: 1.5px;
+  fill: none; }

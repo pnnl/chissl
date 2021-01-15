@@ -1,0 +1,41 @@
+.popover-component {
+  margin: 2px;
+  padding: 4px;
+  border: 2px solid lightgray;
+  border-radius: 10px;
+  max-width: 150px; }
+  .popover-component .topic {
+    border: solid black 1px;
+    display: inline-block;
+    margin-right: 3px;
+    border-radius: 5px;
+    width: 10px;
+    height: 10px; }
+
+.popover-header {
+  cursor: pointer; }
+  .popover-header i {
+    margin-right: 5px;
+    color: darkgray; }
+  .popover-header .title {
+    font-weight: bold; }
+  .popover-header .subtitle {
+    font-size: .75em;
+    color: darkgray; }
+  .popover-header hr {
+    border: none;
+    height: 2px;
+    background-color: lightgray; }
+
+.compact.popover-header .title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; }
+
+.popover-content {
+  margin: 3px;
+  max-width: 620px; }
+  .popover-content pre {
+    max-height: 400px;
+    overflow-y: scroll;
+    white-space: pre-wrap; }

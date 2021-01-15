@@ -1,3 +1,18 @@
-node_modules
-*.css
-applications/data
+*.egg-info/
+.ipynb_checkpoints/
+dist/
+build/
+*.py[cod]
+node_modules/
+
+# Compiled javascript
+chissl/static/
+
+# OS X
+.DS_Store
+widget/chissl/static
+es
+
+# notebook data
+notebooks/**/data
+lib

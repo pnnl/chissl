@@ -1,0 +1,2 @@
+recursive-include chissl/static *.*
+include chissl-widget.json

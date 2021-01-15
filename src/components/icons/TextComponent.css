@@ -1,0 +1,40 @@
+.text-component {
+  margin: 2px;
+  padding: 4px;
+  border: 2px solid lightgray;
+  border-radius: 10px;
+  max-width: 150px; }
+  .text-component .topic {
+    display: inline-block;
+    margin-right: 5px;
+    border-radius: 6px;
+    width: 15px;
+    height: 12px; }
+
+.text-header {
+  cursor: pointer; }
+  .text-header i {
+    margin-right: 5px;
+    color: darkgray; }
+  .text-header .title {
+    font-weight: bold; }
+  .text-header .subtitle {
+    font-size: .75em;
+    color: darkgray; }
+  .text-header hr {
+    border: none;
+    height: 2px;
+    background-color: lightgray; }
+
+.compact.text-header .title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; }
+
+.text-content {
+  margin: 3px;
+  max-width: 610px; }
+  .text-content pre {
+    max-height: 400px;
+    overflow-y: scroll;
+    white-space: pre-wrap; }
