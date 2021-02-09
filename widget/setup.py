@@ -144,8 +144,8 @@ setup_args = {
         'numpy>=1.19.0',
         'pandas>=1.1.0',
         'scipy>=1.5.0',
-        'sklearn>=0.23.0',
-        'umap>=0.4.6'
+        'scikit-learn>=0.23.0',
+        'umap-learn>=0.4.6'
     ],
     'packages': find_packages(),
     'zip_safe': False,
