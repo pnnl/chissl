@@ -58,6 +58,12 @@ Check out the examples which show how to use CHISSL for image and text use cases
 
 These will walk you though how you need to prepare your representation matrix and corresponding JSON files for each data instance. Because there is no backend in this version, each data instance is copied to disk and then accessed through an HTTP request. The examples show you how to piggyback on Jupyter to host your data, but this is not required. Advanced users could/should setup a REST API instead.
 
+### Run digits
+The notebook will not run properly in VS Code. You must open it with `jupyter-notebook` in the web browser.
+```bash
+cd notebooks/digits
+jupyter-notebook Digits.ipynb
+```
 
 # Adding Custom Instance Visualizations
 If you want to add applications beyond the image or text use cases, you will need to create a custom visualization. You will modify the following files:

@@ -48,9 +48,8 @@ def get_jupyter_url_from_local_path(path):
     # also, obj contains a PID of the notebook server and other useful things, how do we use that
 
     abspath = os.path.abspath(path)
-    if path.endswith(os.path.sep):
+    if not path.endswith(os.path.sep):
         abspath += '/'
-
     for obj in notebookapp.list_running_servers():
         return abspath.replace(obj['notebook_dir'], '/files')
 
